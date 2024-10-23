@@ -1,4 +1,5 @@
 import requests
+import base64
 
 # Variables globales
 WP_URL = "http://bbbbb.local:10011/wp-json/wp/v2/"
@@ -7,9 +8,15 @@ USERNAME = 'bbbbb'
 PASSWORD = '5APN rDyS KBAv 0XHs 9EIZ IvLd'
 NONCE = 'your-generated-nonce'
 
+# Formar la cadena 'usuario:contraseña'
+auth_string = f'{USERNAME}:{PASSWORD}'
+
+# Codificar la cadena en Base64
+auth_base64 = base64.b64encode(auth_string.encode()).decode()
+
 HEADERS = {
     'X-WP-Nonce': NONCE,
-    'Authorization': f'Basic {USERNAME}:{PASSWORD}',
+    'Authorization': f'Basic {auth_base64}',
     'Content-Type': 'application/json'
 }
 
@@ -28,7 +35,7 @@ def delete_all_posts():
 
     posts = response.json()
     for post in posts:
-        delete_url = WP_URL + f'posts/{post["id"]}?force=true'
+        delete_url = WP_URL + f'posts/{post["id"]}' # ?force=true'
         delete_response = requests.delete(delete_url, headers=HEADERS)
         if delete_response.status_code != 200:
             raise RESTAPIError(f"Failed to delete post {post['id']}: {delete_response.text}")
@@ -100,7 +107,7 @@ def run_tests(test_data):
 
             # Crear el scheduler
             scheduler_response = create_expression(scheduler_data)
-            scheduler_id = scheduler_response['message']
+            scheduler_id = scheduler_response['scheduler_id']
 
             # Crear los posts asociados a este scheduler
             post_ids = []

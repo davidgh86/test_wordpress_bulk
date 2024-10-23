@@ -1,6 +1,7 @@
 import requests
 import random
 import string
+import base64
 from datetime import datetime
 
 # Variables globales
@@ -10,9 +11,15 @@ USERNAME = 'bbbbb'
 PASSWORD = '5APN rDyS KBAv 0XHs 9EIZ IvLd'
 NONCE = 'your-generated-nonce'  # Debes generar el nonce de WordPress
 
+# Formar la cadena 'usuario:contraseña'
+auth_string = f'{USERNAME}:{PASSWORD}'
+
+# Codificar la cadena en Base64
+auth_base64 = base64.b64encode(auth_string.encode()).decode()
+
 HEADERS = {
     'X-WP-Nonce': NONCE,
-    'Authorization': f'Basic {USERNAME}:{PASSWORD}',
+    'Authorization': f'Basic {auth_base64}',
     'Content-Type': 'application/json'
 }
 
