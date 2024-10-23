@@ -2,7 +2,7 @@
     {
         "scheduler": {
             "id": 1,
-            "scheduler_name": "Expresi\u00f3n con Tag y AND",
+            "scheduler_name": "Expresión con Tag y AND",
             "cron_expression": "*/5 * * * *",
             "matchers": [
                 {
@@ -24,8 +24,8 @@
         },
         "posts": [
             {
-                "post_title": "Post for Expresi\u00f3n con Tag y AND",
-                "post_content": "Content to match expression for Expresi\u00f3n con Tag y AND",
+                "post_title": "Post for Expresión con Tag y AND",
+                "post_content": "Content to match expression for Expresión con Tag y AND",
                 "post_status": "publish",
                 "post_category": [
                     1
@@ -35,8 +35,8 @@
                 ]
             },
             {
-                "post_title": "Another post for Expresi\u00f3n con Tag y AND",
-                "post_content": "Another content for Expresi\u00f3n con Tag y AND",
+                "post_title": "Another post for Expresión con Tag y AND",
+                "post_content": "Another content for Expresión con Tag y AND",
                 "post_status": "future",
                 "post_category": [
                     2
@@ -45,12 +45,13 @@
                     "future-tag"
                 ]
             }
-        ]
+        ],
+        "expected": [0]
     },
     {
         "scheduler": {
             "id": 2,
-            "scheduler_name": "Expresi\u00f3n con NOT y categor\u00eda",
+            "scheduler_name": "Expresión con NOT y categoría",
             "cron_expression": "*/10 * * * *",
             "matchers": [
                 {
@@ -67,8 +68,8 @@
         },
         "posts": [
             {
-                "post_title": "Post for Expresi\u00f3n con NOT y categor\u00eda",
-                "post_content": "Content to match expression for Expresi\u00f3n con NOT y categor\u00eda",
+                "post_title": "Post for Expresión con NOT y categoría",
+                "post_content": "Content to match expression for Expresión con NOT y categoría",
                 "post_status": "publish",
                 "post_category": [
                     1
@@ -78,8 +79,8 @@
                 ]
             },
             {
-                "post_title": "Another post for Expresi\u00f3n con NOT y categor\u00eda",
-                "post_content": "Another content for Expresi\u00f3n con NOT y categor\u00eda",
+                "post_title": "Another post for Expresión con NOT y categoría",
+                "post_content": "Another content for Expresión con NOT y categoría",
                 "post_status": "future",
                 "post_category": [
                     2
@@ -88,12 +89,13 @@
                     "future-tag"
                 ]
             }
-        ]
+        ],
+        "expected": [0, 1]
     },
     {
         "scheduler": {
             "id": 3,
-            "scheduler_name": "Expresi\u00f3n con estado y fecha m\u00e1xima",
+            "scheduler_name": "Expresión con estado y fecha máxima",
             "cron_expression": "0 0 * * *",
             "matchers": [
                 {
@@ -115,8 +117,8 @@
         },
         "posts": [
             {
-                "post_title": "Post for Expresi\u00f3n con estado y fecha m\u00e1xima",
-                "post_content": "Content to match expression for Expresi\u00f3n con estado y fecha m\u00e1xima",
+                "post_title": "Post for Expresión con estado y fecha máxima",
+                "post_content": "Content to match expression for Expresión con estado y fecha máxima",
                 "post_status": "publish",
                 "post_category": [
                     1
@@ -126,8 +128,8 @@
                 ]
             },
             {
-                "post_title": "Another post for Expresi\u00f3n con estado y fecha m\u00e1xima",
-                "post_content": "Another content for Expresi\u00f3n con estado y fecha m\u00e1xima",
+                "post_title": "Another post for Expresión con estado y fecha máxima",
+                "post_content": "Another content for Expresión con estado y fecha máxima",
                 "post_status": "future",
                 "post_category": [
                     2
@@ -136,12 +138,13 @@
                     "future-tag"
                 ]
             }
-        ]
+        ],
+        "expected": [0]
     },
     {
         "scheduler": {
             "id": 4,
-            "scheduler_name": "Expresi\u00f3n con t\u00edtulo y contenido",
+            "scheduler_name": "Expresión con título y contenido",
             "cron_expression": "15 * * * *",
             "matchers": [
                 {
@@ -163,8 +166,8 @@
         },
         "posts": [
             {
-                "post_title": "Post for Expresi\u00f3n con t\u00edtulo y contenido",
-                "post_content": "Content to match expression for Expresi\u00f3n con t\u00edtulo y contenido",
+                "post_title": "Post for Expresión con título y contenido",
+                "post_content": "Content to match expression for Expresión con título y contenido",
                 "post_status": "publish",
                 "post_category": [
                     1
@@ -174,8 +177,8 @@
                 ]
             },
             {
-                "post_title": "Another post for Expresi\u00f3n con t\u00edtulo y contenido",
-                "post_content": "Another content for Expresi\u00f3n con t\u00edtulo y contenido",
+                "post_title": "Another post for Expresión con título y contenido",
+                "post_content": "Another content for Expresión con título y contenido",
                 "post_status": "future",
                 "post_category": [
                     2
@@ -184,12 +187,13 @@
                     "future-tag"
                 ]
             }
-        ]
+        ],
+        "expected": [0]
     },
     {
         "scheduler": {
             "id": 5,
-            "scheduler_name": "Expresi\u00f3n con slug y comentarios m\u00ednimos",
+            "scheduler_name": "Expresión con slug y comentarios mínimos",
             "cron_expression": "0 12 * * *",
             "matchers": [
                 {
@@ -211,8 +215,8 @@
         },
         "posts": [
             {
-                "post_title": "Post for Expresi\u00f3n con slug y comentarios m\u00ednimos",
-                "post_content": "Content to match expression for Expresi\u00f3n con slug y comentarios m\u00ednimos",
+                "post_title": "Post for Expresión con slug y comentarios mínimos",
+                "post_content": "Content to match expression for Expresión con slug y comentarios mínimos",
                 "post_status": "publish",
                 "post_category": [
                     1
@@ -222,8 +226,8 @@
                 ]
             },
             {
-                "post_title": "Another post for Expresi\u00f3n con slug y comentarios m\u00ednimos",
-                "post_content": "Another content for Expresi\u00f3n con slug y comentarios m\u00ednimos",
+                "post_title": "Another post for Expresión con slug y comentarios mínimos",
+                "post_content": "Another content for Expresión con slug y comentarios mínimos",
                 "post_status": "future",
                 "post_category": [
                     2
@@ -232,12 +236,13 @@
                     "future-tag"
                 ]
             }
-        ]
+        ],
+        "expected": [0]
     },
     {
         "scheduler": {
             "id": 6,
-            "scheduler_name": "Expresi\u00f3n compleja con varios operadores",
+            "scheduler_name": "Expresión compleja con varios operadores",
             "cron_expression": "30 18 * * 1-5",
             "matchers": [
                 {
@@ -279,8 +284,8 @@
         },
         "posts": [
             {
-                "post_title": "Post for Expresi\u00f3n compleja con varios operadores",
-                "post_content": "Content to match expression for Expresi\u00f3n compleja con varios operadores",
+                "post_title": "Post for Expresión compleja con varios operadores",
+                "post_content": "Content to match expression for Expresión compleja con varios operadores",
                 "post_status": "publish",
                 "post_category": [
                     1
@@ -290,8 +295,8 @@
                 ]
             },
             {
-                "post_title": "Another post for Expresi\u00f3n compleja con varios operadores",
-                "post_content": "Another content for Expresi\u00f3n compleja con varios operadores",
+                "post_title": "Another post for Expresión compleja con varios operadores",
+                "post_content": "Another content for Expresión compleja con varios operadores",
                 "post_status": "future",
                 "post_category": [
                     2
@@ -300,6 +305,7 @@
                     "future-tag"
                 ]
             }
-        ]
+        ],
+        "expected": [1]
     }
 ]
