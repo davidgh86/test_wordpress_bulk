@@ -1,0 +1,8 @@
+ID,Prueba,Descripción,Esperado,Realizado,Resultado
+1,Crear posts aleatorios,Crear 5 posts aleatorios usando la API de WordPress,Posts creados exitosamente,Sí/No,Pendiente
+2,Crear expresión válida,Crear una expresión booleana válida usando la API del plugin,Expresión creada exitosamente,Sí/No,Pendiente
+3,Obtener IDs de posts por expresión,Obtener los IDs de los posts que coinciden con la expresión creada,IDs de posts devueltos correctamente,Sí/No,Pendiente
+4,Aplicar shuffling,Aplicar el shuffling (intercambio de fechas) a los posts obtenidos,Shuffling aplicado exitosamente,Sí/No,Pendiente
+5,Validar shuffling de fechas,Comprobar que las fechas han sido intercambiadas correctamente,Fechas cambiadas y coherentes entre post_date y post_date_gmt,Sí/No,Pendiente
+6,Validar cron expression,Verificar que la expresión cron se valida correctamente,Expresión cron validada,Sí/No,Pendiente
+7,Eliminar posts creados,Eliminar los posts creados durante las pruebas,Posts eliminados correctamente,Sí/No,Pendiente
