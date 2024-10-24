@@ -59,9 +59,24 @@ def delete_all_schedulers():
 
 
 # Crear un post específico
+# Crear un post específico con categorías y tags
 def create_post(post_data):
     url = WP_URL + 'posts'
-    response = requests.post(url, json=post_data, headers=HEADERS)
+
+    # Crear y obtener IDs de tags y categorías (o usar los existentes)
+    category_ids = [create_category_if_not_exists(cat) for cat in post_data.get('post_category', [])]
+    tag_ids = [create_tag_if_not_exists(tag) for tag in post_data.get('post_tag', [])]
+
+    # Preparar la data del post
+    payload = {
+        'title': post_data.get('post_title'),
+        'content': post_data.get('post_content'),
+        'status': post_data.get('post_status', 'draft'),  # Default to draft if status is missing
+        'categories': category_ids,  # Usar los IDs de las categorías
+        'tags': tag_ids              # Usar los IDs de los tags
+    }
+
+    response = requests.post(url, json=payload, headers=HEADERS)
     if response.status_code != 201:
         raise RESTAPIError(f"Failed to create post: {response.text}")
 
@@ -91,6 +106,78 @@ def get_post_ids_by_expression(scheduler_id):
     post_ids = response.json().get('post_ids', [])
     print(f"Post IDs returned by expression: {post_ids}")
     return post_ids
+
+
+# Verificar si una tag ya existe
+def get_tag_id_by_name(tag_name):
+    url = WP_URL + 'tags?search=' + tag_name
+    response = requests.get(url, headers=HEADERS)
+
+    if response.status_code != 200:
+        raise RESTAPIError(f"Failed to search tag: {response.text}")
+
+    tags = response.json()
+    if tags:
+        return tags[0]['id']  # Devolver el ID del primer resultado si existe
+    return None
+
+
+# Crear una tag si no existe
+def create_tag_if_not_exists(tag_name):
+    # Comprobar si la tag ya existe
+    tag_id = get_tag_id_by_name(tag_name)
+    if tag_id:
+        print(f"Tag '{tag_name}' already exists with ID: {tag_id}")
+        return tag_id
+
+    # Si no existe, crear la tag
+    url = WP_URL + 'tags'
+    payload = {
+        'name': tag_name
+    }
+    response = requests.post(url, json=payload, headers=HEADERS)
+    if response.status_code != 201:
+        raise RESTAPIError(f"Failed to create tag: {response.text}")
+
+    tag_id = response.json()['id']
+    print(f"Tag created successfully with ID: {tag_id}")
+    return tag_id
+
+
+# Verificar si una categoría ya existe
+def get_category_id_by_name(category_name):
+    url = WP_URL + 'categories?search=' + category_name
+    response = requests.get(url, headers=HEADERS)
+
+    if response.status_code != 200:
+        raise RESTAPIError(f"Failed to search category: {response.text}")
+
+    categories = response.json()
+    if categories:
+        return categories[0]['id']  # Devolver el ID de la categoría si existe
+    return None
+
+
+# Crear una categoría si no existe
+def create_category_if_not_exists(category_name):
+    # Comprobar si la categoría ya existe
+    category_id = get_category_id_by_name(category_name)
+    if category_id:
+        print(f"Category '{category_name}' already exists with ID: {category_id}")
+        return category_id
+
+    # Si no existe, crear la categoría
+    url = WP_URL + 'categories'
+    payload = {
+        'name': category_name
+    }
+    response = requests.post(url, json=payload, headers=HEADERS)
+    if response.status_code != 201:
+        raise RESTAPIError(f"Failed to create category: {response.text}")
+
+    category_id = response.json()['id']
+    print(f"Category created successfully with ID: {category_id}")
+    return category_id
 
 
 # Función principal para correr los tests
@@ -141,19 +228,9 @@ test_data = [
             "cron_expression": "*/5 * * * *",
             "matchers": [
                 {
-                    "matcher_type": "tag",
-                    "matcher_value": "tech",
+                    "type": "tag",
+                    "value": "tech",
                     "order": 0
-                },
-                {
-                    "matcher_type": "operator",
-                    "matcher_value": "AND",
-                    "order": 1
-                },
-                {
-                    "matcher_type": "category",
-                    "matcher_value": "news",
-                    "order": 2
                 }
             ]
         },
@@ -162,14 +239,14 @@ test_data = [
                 "post_title": "Post for Expresión con Tag y AND",
                 "post_content": "Content to match expression for Expresión con Tag y AND",
                 "post_status": "publish",
-                "post_category": [1],
+                "post_category": ["category1"],
                 "post_tag": ["tech"]
             },
             {
                 "post_title": "Another post for Expresión con Tag y AND",
                 "post_content": "Another content for Expresión con Tag y AND",
                 "post_status": "future",
-                "post_category": [2],
+                "post_category": ["category1"],
                 "post_tag": ["news"]
             }
         ],
