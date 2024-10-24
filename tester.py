@@ -59,7 +59,28 @@ def delete_all_schedulers():
             raise RESTAPIError(f"Failed to delete scheduler {scheduler['id']}: {delete_response.text}")
         print(f"Deleted scheduler {scheduler['id']}")
 
-# Crear un post con categorías y tags
+
+# Crear un comentario para un post
+def create_comment(post_id, comment_content):
+    url = WP_URL + 'comments'
+    payload = {
+        'post': post_id,
+        'content': comment_content,
+        'author_name': 'Test Author',  # Nombre del autor del comentario
+        'author_email': 'test_author@example.com',  # Email del autor
+    }
+
+    response = requests.post(url, json=payload, headers=HEADERS)
+    if response.status_code != 201:
+        raise RESTAPIError(f"Failed to create comment: {response.text}")
+
+    comment_id = response.json()['id']
+    print(f"Comment created successfully with ID: {comment_id} for post ID: {post_id}")
+    return comment_id
+
+
+
+# Crear un post específico con categorías, tags y comentarios
 def create_post(post_data):
     url = WP_URL + 'posts'
 
@@ -71,7 +92,8 @@ def create_post(post_data):
         'content': post_data.get('post_content'),
         'status': post_data.get('post_status', 'draft'),
         'categories': category_ids,
-        'tags': tag_ids
+        'tags': tag_ids,
+        'date': post_data.get('post_date')  # Añadir la fecha de publicación si está presente
     }
 
     response = requests.post(url, json=payload, headers=HEADERS)
@@ -80,7 +102,13 @@ def create_post(post_data):
 
     post_id = response.json()['id']
     print(f"Post created successfully with ID: {post_id}")
+
+    if 'post_comment_count' in post_data:
+        for i in range(post_data['post_comment_count']):
+            create_comment(post_id, f"Test comment {i + 1}")
+
     return post_id
+
 
 # Crear un scheduler
 def create_expression(scheduler_data):
