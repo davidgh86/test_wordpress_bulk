@@ -1,54 +1,97 @@
 [
-    {
+   {
     "scheduler": {
-        "scheduler_name": "Expresión con Categoría y Fecha Mínima",
-        "cron_expression": "0 12 * * *",
+        "scheduler_name": "Test con Paréntesis Complejo",
+        "cron_expression": "*/10 * * * *",
         "matchers": [
             {
-                "type": "category",
-                "value": "news",
+                "type": "operator",
+                "value": "(",
                 "order": 0
+            },
+            {
+                "type": "category",
+                "value": "health",
+                "order": 1
             },
             {
                 "type": "operator",
                 "value": "AND",
-                "order": 1
+                "order": 2
             },
             {
-                "type": "datetime_min",
-                "value": "2023-01-01 00:00:00",
-                "order": 2
+                "type": "status",
+                "value": "publish",
+                "order": 3
+            },
+            {
+                "type": "operator",
+                "value": ")",
+                "order": 4
+            },
+            {
+                "type": "operator",
+                "value": "OR",
+                "order": 5
+            },
+            {
+                "type": "operator",
+                "value": "(",
+                "order": 6
+            },
+            {
+                "type": "category",
+                "value": "tech",
+                "order": 7
+            },
+            {
+                "type": "operator",
+                "value": "AND",
+                "order": 8
+            },
+            {
+                "type": "status",
+                "value": "draft",
+                "order": 9
+            },
+            {
+                "type": "operator",
+                "value": ")",
+                "order": 10
             }
         ]
     },
     "posts": [
         {
-            "post_title": "News Post After 2023",
-            "post_content": "This is a news post published after January 1, 2023.",
+            "post_title": "Health Post Published",
+            "post_content": "This is a health post that is published.",
             "post_status": "publish",
-            "post_category": ["news"],
-            "post_tag": ["breaking-news"],
-            "post_date": "2023-05-10 12:00:00"
+            "post_category": ["health"],
+            "post_tag": ["wellness"]
         },
         {
-            "post_title": "Old News Post Before 2023",
-            "post_content": "This is a news post published before January 1, 2023.",
-            "post_status": "publish",
-            "post_category": ["news"],
-            "post_tag": ["archive"],
-            "post_date": "2022-12-20 12:00:00"
+            "post_title": "Tech Post Draft",
+            "post_content": "This is a tech post that is in draft.",
+            "post_status": "draft",
+            "post_category": ["tech"],
+            "post_tag": ["technology"]
         },
         {
-            "post_title": "Technology Post After 2023",
-            "post_content": "This is a technology post published after January 1, 2023.",
+            "post_title": "Tech Post Published",
+            "post_content": "This is a tech post that is published.",
             "post_status": "publish",
             "post_category": ["tech"],
-            "post_tag": ["tech-news"],
-            "post_date": "2023-05-10 12:00:00"
+            "post_tag": ["technology"]
+        },
+        {
+            "post_title": "Random Post",
+            "post_content": "This is a post in a random category.",
+            "post_status": "publish",
+            "post_category": ["random"],
+            "post_tag": ["misc"]
         }
     ],
-    "expected": [0]
+    "expected": [0, 1]
 }
-
 
 ]
