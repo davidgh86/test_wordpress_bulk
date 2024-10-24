@@ -1,14 +1,12 @@
 [
-
     {
     "scheduler": {
-        "xpr": "publicada despues despues de 2022 y con mas de 5 comentarios y categoria tecnologia",
-        "scheduler_name": "Expresión Compleja con Estado, Fecha, Comentarios y Categoría",
+        "scheduler_name": "Expresión con Categoría y Fecha Mínima",
         "cron_expression": "0 12 * * *",
         "matchers": [
             {
-                "type": "status",
-                "value": "publish",
+                "type": "category",
+                "value": "news",
                 "order": 0
             },
             {
@@ -20,67 +18,37 @@
                 "type": "datetime_min",
                 "value": "2023-01-01 00:00:00",
                 "order": 2
-            },
-            {
-                "type": "operator",
-                "value": "AND",
-                "order": 3
-            },
-            {
-                "type": "comment_count_min",
-                "value": "5",
-                "order": 4
-            },
-            {
-                "type": "operator",
-                "value": "AND",
-                "order": 5
-            },
-            {
-                "type": "category",
-                "value": "tech",
-                "order": 6
             }
         ]
     },
     "posts": [
         {
-            "post_title": "Tech Post with Comments",
-            "post_content": "This is a tech post that has more than 5 comments and is published.",
+            "post_title": "News Post After 2023",
+            "post_content": "This is a news post published after January 1, 2023.",
             "post_status": "publish",
-            "post_category": ["tech"],
-            "post_tag": ["technology"],
-            "post_comment_count": 10,
+            "post_category": ["news"],
+            "post_tag": ["breaking-news"],
             "post_date": "2023-05-10 12:00:00"
         },
         {
-            "post_title": "Tech Post with Few Comments",
-            "post_content": "This tech post has only 2 comments and is published.",
+            "post_title": "Old News Post Before 2023",
+            "post_content": "This is a news post published before January 1, 2023.",
             "post_status": "publish",
-            "post_category": ["tech"],
-            "post_tag": ["innovation"],
-            "post_comment_count": 2,
-            "post_date": "2023-06-15 12:00:00"
+            "post_category": ["news"],
+            "post_tag": ["archive"],
+            "post_date": "2022-12-20 12:00:00"
         },
         {
-            "post_title": "Health Post with Many Comments",
-            "post_content": "This is a health post, but it doesn't match the tech category.",
+            "post_title": "Technology Post After 2023",
+            "post_content": "This is a technology post published after January 1, 2023.",
             "post_status": "publish",
-            "post_category": ["health"],
-            "post_tag": ["fitness"],
-            "post_comment_count": 15,
-            "post_date": "2023-04-20 12:00:00"
-        },
-        {
-            "post_title": "Future Tech Post with Comments",
-            "post_content": "This is a tech post with more than 5 comments but is scheduled for the future.",
-            "post_status": "future",
             "post_category": ["tech"],
-            "post_tag": ["AI"],
-            "post_comment_count": 8,
-            "post_date": "2024-01-01 12:00:00"
+            "post_tag": ["tech-news"],
+            "post_date": "2023-05-10 12:00:00"
         }
     ],
     "expected": [0]
 }
+
+
 ]

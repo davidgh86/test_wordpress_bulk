@@ -237,11 +237,33 @@ def delete_all_categories():
             raise RESTAPIError(f"Failed to delete category {category['id']}: {delete_response.text}")
         print(f"Deleted category {category['id']}")
 
+
+# Borrar todos los comentarios
+def delete_all_comments():
+    url = WP_URL + 'comments?per_page=100'
+
+    # Get all comments
+    response = requests.get(url, headers=HEADERS)
+    if response.status_code != 200:
+        raise RESTAPIError(f"Failed to retrieve comments: {response.text}")
+
+    comments = response.json()
+
+    # Loop through each comment and delete it
+    for comment in comments:
+        delete_url = WP_URL + f'comments/{comment["id"]}?force=true'
+        delete_response = requests.delete(delete_url, headers=HEADERS)
+        if delete_response.status_code != 200:
+            raise RESTAPIError(f"Failed to delete comment {comment['id']}: {delete_response.text}")
+        print(f"Deleted comment {comment['id']}")
+
+
 # Test principal usando pytest
-@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')))
-#@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')))
+#@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')))
+@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')))
 def test_scheduler_system(test_case):
     try:
+        delete_all_comments()
         delete_all_posts()
         delete_all_categories()
         delete_all_tags()

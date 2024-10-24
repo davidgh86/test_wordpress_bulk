@@ -123,7 +123,89 @@
             }
         ],
         "expected": [0]
-    }
+    },
+    {
+    "scheduler": {
+        "scheduler_name": "Expresión con fecha mínima",
+        "cron_expression": "*/10 * * * *",
+        "matchers": [
+            {
+                "type": "datetime_min",
+                "value": "2023-01-01 00:00:00",
+                "order": 0
+            }
+        ]
+    },
+    "posts": [
+        {
+            "post_title": "Post published after 2023",
+            "post_content": "This post was published after January 1, 2023.",
+            "post_status": "publish",
+            "post_category": ["news"],
+            "post_tag": ["latest"],
+            "post_date": "2023-05-10 12:00:00"
+        },
+        {
+            "post_title": "Post published before 2023",
+            "post_content": "This post was published before January 1, 2023.",
+            "post_status": "publish",
+            "post_category": ["news"],
+            "post_tag": ["old"],
+            "post_date": "2022-12-20 12:00:00"
+        }
+    ],
+    "expected": [0]
+},
+    {
+    "scheduler": {
+        "scheduler_name": "Expresión con Categoría y Fecha Mínima",
+        "cron_expression": "0 12 * * *",
+        "matchers": [
+            {
+                "type": "category",
+                "value": "news",
+                "order": 0
+            },
+            {
+                "type": "operator",
+                "value": "AND",
+                "order": 1
+            },
+            {
+                "type": "datetime_min",
+                "value": "2023-01-01 00:00:00",
+                "order": 2
+            }
+        ]
+    },
+    "posts": [
+        {
+            "post_title": "News Post After 2023",
+            "post_content": "This is a news post published after January 1, 2023.",
+            "post_status": "publish",
+            "post_category": ["news"],
+            "post_tag": ["breaking-news"],
+            "post_date": "2023-05-10 12:00:00"
+        },
+        {
+            "post_title": "Old News Post Before 2023",
+            "post_content": "This is a news post published before January 1, 2023.",
+            "post_status": "publish",
+            "post_category": ["news"],
+            "post_tag": ["archive"],
+            "post_date": "2022-12-20 12:00:00"
+        },
+        {
+            "post_title": "Technology Post After 2023",
+            "post_content": "This is a technology post published after January 1, 2023.",
+            "post_status": "publish",
+            "post_category": ["tech"],
+            "post_tag": ["tech-news"],
+            "post_date": "2023-05-10 12:00:00"
+        }
+    ],
+    "expected": [0]
+}
 
 
 
