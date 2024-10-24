@@ -160,13 +160,6 @@ def get_category_id_by_name(category_name):
 
 # Crear una categoría si no existe
 def create_category_if_not_exists(category_name):
-    # Comprobar si la categoría ya existe
-    category_id = get_category_id_by_name(category_name)
-    if category_id:
-        print(f"Category '{category_name}' already exists with ID: {category_id}")
-        return category_id
-
-    # Si no existe, crear la categoría
     url = WP_URL + 'categories'
     payload = {
         'name': category_name
@@ -179,6 +172,36 @@ def create_category_if_not_exists(category_name):
     print(f"Category created successfully with ID: {category_id}")
     return category_id
 
+# Borrar todas las tags
+def delete_all_tags():
+    url = WP_URL + 'tags?per_page=100'
+    response = requests.get(url, headers=HEADERS)
+    if response.status_code != 200:
+        raise RESTAPIError(f"Failed to retrieve tags: {response.text}")
+
+    tags = response.json()
+    for tag in tags:
+        delete_url = WP_URL + f'tags/{tag["id"]}?force=true'
+        delete_response = requests.delete(delete_url, headers=HEADERS)
+        if delete_response.status_code != 200:
+            raise RESTAPIError(f"Failed to delete tag {tag['id']}: {delete_response.text}")
+        print(f"Deleted tag {tag['id']}")
+
+# Borrar todas las categorías
+def delete_all_categories():
+    url = WP_URL + 'categories?per_page=100'
+    response = requests.get(url, headers=HEADERS)
+    if response.status_code != 200:
+        raise RESTAPIError(f"Failed to retrieve categories: {response.text}")
+
+    categories = response.json()
+    for category in categories:
+        delete_url = WP_URL + f'categories/{category["id"]}?force=true'
+        delete_response = requests.delete(delete_url, headers=HEADERS)
+        if delete_response.status_code != 200:
+            raise RESTAPIError(f"Failed to delete category {category['id']}: {delete_response.text}")
+        print(f"Deleted category {category['id']}")
+
 
 # Función principal para correr los tests
 def run_tests(test_data):
@@ -186,6 +209,9 @@ def run_tests(test_data):
     for test_case in test_data:
         try:
             delete_all_posts()
+            delete_all_categories()
+            delete_all_tags()
+
             delete_all_schedulers()
 
             scheduler_data = test_case["scheduler"]
