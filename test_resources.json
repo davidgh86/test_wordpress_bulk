@@ -1,7 +1,6 @@
 [
     {
         "scheduler": {
-            "id": 1,
             "scheduler_name": "Expresión con Tag y AND",
             "cron_expression": "*/5 * * * *",
             "matchers": [
@@ -29,5 +28,103 @@
             }
         ],
         "expected": [0]
+    },
+    {
+        "scheduler": {
+            "scheduler_name": "Expresión con Tag y OR",
+            "cron_expression": "*/10 * * * *",
+            "matchers": [
+                {
+                    "type": "tag",
+                    "value": "news",
+                    "order": 0
+                },
+                {
+                    "type": "operator",
+                    "value": "OR",
+                    "order": 1
+                },
+                {
+                    "type": "tag",
+                    "value": "technology",
+                    "order": 2
+                }
+            ]
+        },
+        "posts": [
+            {
+                "post_title": "Post for Expresión con Tag OR Technology",
+                "post_content": "This post matches the tag 'technology' and should be included.",
+                "post_status": "publish",
+                "post_category": ["tech"],
+                "post_tag": ["technology"]
+            },
+            {
+                "post_title": "Post with News Tag",
+                "post_content": "This post matches the tag 'news' and should be included.",
+                "post_status": "publish",
+                "post_category": ["politics"],
+                "post_tag": ["news"]
+            },
+            {
+                "post_title": "Non-matching post",
+                "post_content": "This post has a tag that doesn't match the scheduler.",
+                "post_status": "publish",
+                "post_category": ["sports"],
+                "post_tag": ["sports"]
+            }
+        ],
+        "expected": [0, 1]
+    },
+    {
+        "scheduler": {
+            "xpr": "dfasdfa",
+            "scheduler_name": "Expresión con Tag y Categoría AND",
+            "cron_expression": "*/15 * * * *",
+            "matchers": [
+                {
+                    "type": "tag",
+                    "value": "health",
+                    "order": 0
+                },
+                {
+                    "type": "operator",
+                    "value": "AND",
+                    "order": 1
+                },
+                {
+                    "type": "category",
+                    "value": "lifestyle",
+                    "order": 2
+                }
+            ]
+        },
+        "posts": [
+            {
+                "post_title": "Post for Expresión with Health Tag and Lifestyle Category",
+                "post_content": "This post matches both the tag 'health' and the category 'lifestyle'.",
+                "post_status": "publish",
+                "post_category": ["lifestyle"],
+                "post_tag": ["health"]
+            },
+            {
+                "post_title": "Post with Health Tag but Wrong Category",
+                "post_content": "This post has the tag 'health' but doesn't match the category.",
+                "post_status": "publish",
+                "post_category": ["tech"],
+                "post_tag": ["health"]
+            },
+            {
+                "post_title": "Post with Lifestyle Category but No Health Tag",
+                "post_content": "This post has the category 'lifestyle' but doesn't match the tag.",
+                "post_status": "publish",
+                "post_category": ["lifestyle"],
+                "post_tag": ["fitness"]
+            }
+        ],
+        "expected": [0]
     }
+
+
+
 ]

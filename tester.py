@@ -1,7 +1,7 @@
 import json
-
 import requests
 import base64
+import pytest
 
 # Variables globales
 WP_URL = "http://bbbbb.local:10011/wp-json/wp/v2/"
@@ -59,23 +59,19 @@ def delete_all_schedulers():
             raise RESTAPIError(f"Failed to delete scheduler {scheduler['id']}: {delete_response.text}")
         print(f"Deleted scheduler {scheduler['id']}")
 
-
-# Crear un post específico
-# Crear un post específico con categorías y tags
+# Crear un post con categorías y tags
 def create_post(post_data):
     url = WP_URL + 'posts'
 
-    # Crear y obtener IDs de tags y categorías (o usar los existentes)
     category_ids = [create_category_if_not_exists(cat) for cat in post_data.get('post_category', [])]
     tag_ids = [create_tag_if_not_exists(tag) for tag in post_data.get('post_tag', [])]
 
-    # Preparar la data del post
     payload = {
         'title': post_data.get('post_title'),
         'content': post_data.get('post_content'),
-        'status': post_data.get('post_status', 'draft'),  # Default to draft if status is missing
-        'categories': category_ids,  # Usar los IDs de las categorías
-        'tags': tag_ids              # Usar los IDs de los tags
+        'status': post_data.get('post_status', 'draft'),
+        'categories': category_ids,
+        'tags': tag_ids
     }
 
     response = requests.post(url, json=payload, headers=HEADERS)
@@ -86,7 +82,6 @@ def create_post(post_data):
     print(f"Post created successfully with ID: {post_id}")
     return post_id
 
-
 # Crear un scheduler
 def create_expression(scheduler_data):
     url = PLUGIN_API_URL + 'scheduler'
@@ -96,7 +91,6 @@ def create_expression(scheduler_data):
 
     print(f"Scheduler created successfully: {response.json()['message']}")
     return response.json()
-
 
 # Obtener los IDs de los posts a los que aplica una expresión
 def get_post_ids_by_expression(scheduler_id):
@@ -109,34 +103,27 @@ def get_post_ids_by_expression(scheduler_id):
     print(f"Post IDs returned by expression: {post_ids}")
     return post_ids
 
-
 # Verificar si una tag ya existe
 def get_tag_id_by_name(tag_name):
     url = WP_URL + 'tags?search=' + tag_name
     response = requests.get(url, headers=HEADERS)
-
     if response.status_code != 200:
         raise RESTAPIError(f"Failed to search tag: {response.text}")
 
     tags = response.json()
     if tags:
-        return tags[0]['id']  # Devolver el ID del primer resultado si existe
+        return tags[0]['id']
     return None
-
 
 # Crear una tag si no existe
 def create_tag_if_not_exists(tag_name):
-    # Comprobar si la tag ya existe
     tag_id = get_tag_id_by_name(tag_name)
     if tag_id:
         print(f"Tag '{tag_name}' already exists with ID: {tag_id}")
         return tag_id
 
-    # Si no existe, crear la tag
     url = WP_URL + 'tags'
-    payload = {
-        'name': tag_name
-    }
+    payload = {'name': tag_name}
     response = requests.post(url, json=payload, headers=HEADERS)
     if response.status_code != 201:
         raise RESTAPIError(f"Failed to create tag: {response.text}")
@@ -145,48 +132,28 @@ def create_tag_if_not_exists(tag_name):
     print(f"Tag created successfully with ID: {tag_id}")
     return tag_id
 
-
 # Verificar si una categoría ya existe
 def get_category_id_by_name(category_name):
     url = WP_URL + 'categories?search=' + category_name
     response = requests.get(url, headers=HEADERS)
-
     if response.status_code != 200:
         raise RESTAPIError(f"Failed to search category: {response.text}")
 
     categories = response.json()
     if categories:
-        return categories[0]['id']  # Devolver el ID de la categoría si existe
+        return categories[0]['id']
     return None
 
-
-# Crear una categoría si no existe, manejando términos duplicados y padres
-def create_category_if_not_exists(category_name, parent_id=None):
-    # Comprobar si la categoría ya existe
+# Crear una categoría si no existe
+def create_category_if_not_exists(category_name):
     category_id = get_category_id_by_name(category_name)
-
     if category_id:
         print(f"Category '{category_name}' already exists with ID: {category_id}")
         return category_id
 
-    # Si no existe, crear la categoría
     url = WP_URL + 'categories'
-    payload = {
-        'name': category_name
-    }
-
-    # Agregar el parent si es que se especificó
-    if parent_id:
-        payload['parent'] = parent_id
-
+    payload = {'name': category_name}
     response = requests.post(url, json=payload, headers=HEADERS)
-
-    # Si la categoría ya existe (error 'term_exists'), devolver el ID de la existente
-    if response.status_code == 400 and response.json().get('code') == 'term_exists':
-        existing_category_id = response.json()['data']['term_id']
-        print(f"Category '{category_name}' already exists with ID: {existing_category_id}")
-        return existing_category_id
-
     if response.status_code != 201:
         raise RESTAPIError(f"Failed to create category: {response.text}")
 
@@ -194,12 +161,10 @@ def create_category_if_not_exists(category_name, parent_id=None):
     print(f"Category created successfully with ID: {category_id}")
     return category_id
 
-
 # Borrar todas las tags
 def delete_all_tags():
     url = WP_URL + 'tags?per_page=100'
     response = requests.get(url, headers=HEADERS)
-
     if response.status_code != 200:
         raise RESTAPIError(f"Failed to retrieve tags: {response.text}")
 
@@ -209,7 +174,6 @@ def delete_all_tags():
         delete_response = requests.delete(delete_url, headers=HEADERS)
         if delete_response.status_code != 200:
             raise RESTAPIError(f"Failed to delete tag {tag['id']}: {delete_response.text}")
-
         print(f"Deleted tag {tag['id']}")
 
 # Borrar todas las categorías
@@ -227,10 +191,9 @@ def get_default_category_id():
 
 # Borrar todas las categorías excepto la predeterminada
 def delete_all_categories():
-    default_category_id = get_default_category_id()  # Obtener el ID de la categoría predeterminada
+    default_category_id = get_default_category_id()
     url = WP_URL + 'categories?per_page=100'
     response = requests.get(url, headers=HEADERS)
-
     if response.status_code != 200:
         raise RESTAPIError(f"Failed to retrieve categories: {response.text}")
 
@@ -238,60 +201,46 @@ def delete_all_categories():
     for category in categories:
         if category["id"] == default_category_id:
             print(f"Skipping default category {category['id']}")
-            continue  # Saltar la categoría predeterminada
+            continue
 
         delete_url = WP_URL + f'categories/{category["id"]}?force=true'
         delete_response = requests.delete(delete_url, headers=HEADERS)
         if delete_response.status_code != 200:
             raise RESTAPIError(f"Failed to delete category {category['id']}: {delete_response.text}")
-
         print(f"Deleted category {category['id']}")
 
+# Test principal usando pytest
+@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')))
+#@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')))
+def test_scheduler_system(test_case):
+    try:
+        delete_all_posts()
+        delete_all_categories()
+        delete_all_tags()
+        delete_all_schedulers()
 
-# Función principal para correr los tests
-def run_tests(test_data):
+        scheduler_data = test_case["scheduler"]
+        posts = test_case["posts"]
+        expected_post_indices = test_case["expected"]
 
-    for test_case in test_data:
-        try:
-            delete_all_posts()
-            delete_all_schedulers()
+        # Crear el scheduler
+        scheduler_response = create_expression(scheduler_data)
+        scheduler_id = scheduler_response['scheduler_id']
 
-            scheduler_data = test_case["scheduler"]
-            posts = test_case["posts"]
-            expected_post_indices = test_case["expected"]
+        # Crear los posts asociados a este scheduler
+        post_ids = []
+        for post_data in posts:
+            post_id = create_post(post_data)
+            post_ids.append(str(post_id))
 
-            # Crear el scheduler
-            scheduler_response = create_expression(scheduler_data)
-            scheduler_id = scheduler_response['scheduler_id']
+        # Comprobar si los IDs devueltos por la expresión coinciden con los esperados
+        post_ids_by_expression = get_post_ids_by_expression(scheduler_id)
+        expected_ids = [post_ids[i] for i in expected_post_indices]
 
-            # Crear los posts asociados a este scheduler
-            post_ids = []
-            for post_data in posts:
-                post_id = create_post(post_data)
-                post_ids.append(post_id)
+        # Asertar que los IDs coincidan
+        assert set(post_ids_by_expression) == set(expected_ids), f"Expected: {expected_ids}, Got: {post_ids_by_expression}"
 
-            # Comprobar si los IDs devueltos por la expresión coinciden con los esperados
-            post_ids_by_expression = get_post_ids_by_expression(scheduler_id)
-            expected_ids = [post_ids[i] for i in expected_post_indices]
-
-            # Verificar la igualdad
-            if set(post_ids_by_expression) == set(expected_ids):
-                print(f"Test passed for scheduler {scheduler_id}")
-            else:
-                print(f"Test failed for scheduler {scheduler_id}")
-                print(f"Expected: {expected_ids}, Got: {post_ids_by_expression}")
-
-        except RESTAPIError as e:
-            print(f"Error in API request: {str(e)}")
-        except Exception as e:
-            print(f"An unexpected error occurred: {str(e)}")
-
-
-
-
-
-if __name__ == "__main__":
-    archivo_json = 'test_resources.json'
-    with open(archivo_json, 'r', encoding='utf-8') as file:
-        datos = json.load(file)
-    run_tests(datos)
+    except RESTAPIError as e:
+        pytest.fail(f"API request failed: {str(e)}")
+    except Exception as e:
+        pytest.fail(f"An unexpected error occurred: {str(e)}")
