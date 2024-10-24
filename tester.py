@@ -1,3 +1,5 @@
+import json
+
 import requests
 import base64
 
@@ -35,7 +37,7 @@ def delete_all_posts():
 
     posts = response.json()
     for post in posts:
-        delete_url = WP_URL + f'posts/{post["id"]}' # ?force=true'
+        delete_url = WP_URL + f'posts/{post["id"]}?force=true'
         delete_response = requests.delete(delete_url, headers=HEADERS)
         if delete_response.status_code != 200:
             raise RESTAPIError(f"Failed to delete post {post['id']}: {delete_response.text}")
@@ -285,40 +287,11 @@ def run_tests(test_data):
             print(f"An unexpected error occurred: {str(e)}")
 
 
-# Datos de prueba que usarás para testear
-test_data = [
-    {
-        "scheduler": {
-            "id": 1,
-            "scheduler_name": "Expresión con Tag y AND",
-            "cron_expression": "*/5 * * * *",
-            "matchers": [
-                {
-                    "type": "tag",
-                    "value": "sports",
-                    "order": 0
-                }
-            ]
-        },
-        "posts": [
-            {
-                "post_title": "Post for Expresión con Tag y AND",
-                "post_content": "Content to match expression for Expresión con Tag y AND",
-                "post_status": "publish",
-                "post_category": ["jobs"],
-                "post_tag": ["sports"]
-            },
-            {
-                "post_title": "Another post for Expresión con Tag y AND",
-                "post_content": "Another content for Expresión con Tag y AND",
-                "post_status": "future",
-                "post_category": ["state"],
-                "post_tag": ["news"]
-            }
-        ],
-        "expected": [0]
-    }
-]
+
+
 
 if __name__ == "__main__":
-    run_tests(test_data)
+    archivo_json = 'test_resources.json'
+    with open(archivo_json, 'r', encoding='utf-8') as file:
+        datos = json.load(file)
+    run_tests(datos)

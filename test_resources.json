@@ -1,0 +1,33 @@
+[
+    {
+        "scheduler": {
+            "id": 1,
+            "scheduler_name": "Expresión con Tag y AND",
+            "cron_expression": "*/5 * * * *",
+            "matchers": [
+                {
+                    "type": "tag",
+                    "value": "sports",
+                    "order": 0
+                }
+            ]
+        },
+        "posts": [
+            {
+                "post_title": "Post for Expresión con Tag y AND",
+                "post_content": "Content to match expression for Expresión con Tag y AND",
+                "post_status": "publish",
+                "post_category": ["jobs"],
+                "post_tag": ["sports"]
+            },
+            {
+                "post_title": "Another post for Expresión con Tag y AND",
+                "post_content": "Another content for Expresión con Tag y AND",
+                "post_status": "future",
+                "post_category": ["state"],
+                "post_tag": ["news"]
+            }
+        ],
+        "expected": [0]
+    }
+]
