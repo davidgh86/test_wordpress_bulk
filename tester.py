@@ -1,13 +1,24 @@
 import json
+import time
+
 import requests
 import base64
 import pytest
 
 # Variables globales
-WP_URL = "http://bbbbb.local:10011/wp-json/wp/v2/"
-PLUGIN_API_URL = "http://bbbbb.local:10011/wp-json/shuffler/v1/"
-USERNAME = 'bbbbb'
-PASSWORD = 'nunn fRps ls6M Hfvx nntU 5cQq'
+
+HOSTNAME = "http://ccccc.local"
+#HOSTNAME = "http://bbbbb.local:10011"
+
+WP_URL = HOSTNAME + "/wp-json/wp/v2/"
+PLUGIN_API_URL = HOSTNAME + "/wp-json/shuffler/v1/"
+
+#USERNAME = 'bbbbb'
+USERNAME = 'ccccc'
+
+#PASSWORD = 'nunn fRps ls6M Hfvx nntU 5cQq'
+PASSWORD = 't9by bUzR 0t5g 3HTk KB7T pxyr'
+
 NONCE = 'your-generated-nonce'
 
 # Formar la cadena 'usuario:contraseña'
@@ -259,8 +270,8 @@ def delete_all_comments():
 
 
 # Test principal usando pytest
-#@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')))
-@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')))
+@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')))
+#@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')))
 def test_scheduler_system(test_case):
     try:
         delete_all_comments()
@@ -268,6 +279,8 @@ def test_scheduler_system(test_case):
         delete_all_categories()
         delete_all_tags()
         delete_all_schedulers()
+
+        time.sleep(1)
 
         scheduler_data = test_case["scheduler"]
         posts = test_case["posts"]
@@ -282,6 +295,7 @@ def test_scheduler_system(test_case):
         for post_data in posts:
             post_id = create_post(post_data)
             post_ids.append(str(post_id))
+            time.sleep(1)
 
         # Comprobar si los IDs devueltos por la expresión coinciden con los esperados
         post_ids_by_expression = get_post_ids_by_expression(scheduler_id)
