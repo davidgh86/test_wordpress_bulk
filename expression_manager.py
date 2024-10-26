@@ -78,12 +78,13 @@ class ExpressionTree:
         # Generate random truth values for each predicate
         truth_values = {PREDICATE_FORMAT.format(i): random.choice([True, False]) for i in range(1, MAX_PREDICATES + 1)}
         print(f"Generated Expression: {expression}")
-        print(f"Truth Values: {truth_values}")
-        print(f"Evaluation Result: {expression.evaluate(truth_values)}")
+        #print(f"Truth Values: {truth_values}")
+        #print(f"Evaluation Result: {expression.evaluate(truth_values)}")
 
 
 # Usage example
+
 if __name__ == "__main__":
-    expr_tree = ExpressionTree()
-    #expr_tree.generate_predicate()
-    expr_tree.generate_and_evaluate()
+    for i in range(10):
+        expr_tree = ExpressionTree()
+        expr_tree.generate_and_evaluate()
