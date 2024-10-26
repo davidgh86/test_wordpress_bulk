@@ -227,6 +227,13 @@ def get_default_category_id():
     settings = response.json()
     return settings.get('default_category', 1)  # La categoría por defecto es la ID 1 en muchos casos
 
+def get_post_count():
+    url = WP_URL + 'posts?per_page=100'
+    response = requests.get(url, headers=HEADERS)
+    if response.status_code != 200:
+        raise RESTAPIError(f"Failed to retrieve post count: {response.text}")
+    return len(response.json())
+
 
 # Borrar todas las categorías excepto la predeterminada
 def delete_all_categories():
@@ -279,14 +286,16 @@ def test_scheduler_system(test_case):
         delete_all_categories()
         delete_all_tags()
         delete_all_schedulers()
-
         time.sleep(1)
+
+        # Assert initial post count is zero
+        assert get_post_count() == 0, "Expected 0 posts at start, found otherwise."
 
         scheduler_data = test_case["scheduler"]
         posts = test_case["posts"]
         expected_post_indices = test_case["expected"]
 
-        # Crear el scheduler
+        # Create Scheduler
         scheduler_response = create_expression(scheduler_data)
         scheduler_id = scheduler_response['scheduler_id']
 
@@ -296,6 +305,8 @@ def test_scheduler_system(test_case):
             post_id = create_post(post_data)
             post_ids.append(str(post_id))
             time.sleep(1)
+
+        assert get_post_count() == len(posts), f"Expected {len(posts)} posts created, but found different."
 
         # Comprobar si los IDs devueltos por la expresión coinciden con los esperados
         post_ids_by_expression = get_post_ids_by_expression(scheduler_id)
