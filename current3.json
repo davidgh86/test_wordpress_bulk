@@ -1,0 +1,99 @@
+[
+  {
+    "scheduler": {
+      "scheduler_name": "Expresión Compleja con Tags, Categoría, Estado y Fecha",
+      "cron_expression": "0 18 * * *",
+      "matchers": [
+        {
+          "type": "tag",
+          "value": "technology",
+          "order": 0
+        },
+        {
+          "type": "operator",
+          "value": "OR",
+          "order": 1
+        },
+        {
+          "type": "category",
+          "value": "science",
+          "order": 2
+        },
+        {
+          "type": "operator",
+          "value": "AND",
+          "order": 3
+        },
+        {
+          "type": "status",
+          "value": "publish",
+          "order": 4
+        },
+        {
+          "type": "operator",
+          "value": "AND",
+          "order": 5
+        },
+        {
+          "type": "datetime_min",
+          "value": "2022-01-01 00:00:00",
+          "order": 6
+        }
+      ]
+    },
+    "posts": [
+      {
+        "post_title": "Tech Post Published in 2023",
+        "post_content": "This technology post was published in 2023.",
+        "post_status": "publish",
+        "post_category": [
+          "tech"
+        ],
+        "post_tag": [
+          "technology"
+        ],
+        "post_date": "2023-06-15 10:00:00"
+      },
+      {
+        "post_title": "Science Post Published in 2022",
+        "post_content": "This science post was published in 2022.",
+        "post_status": "publish",
+        "post_category": [
+          "science"
+        ],
+        "post_tag": [
+          "research"
+        ],
+        "post_date": "2022-03-10 14:00:00"
+      },
+      {
+        "post_title": "Unpublished Science Post",
+        "post_content": "This science post is unpublished.",
+        "post_status": "draft",
+        "post_category": [
+          "science"
+        ],
+        "post_tag": [
+          "innovation"
+        ],
+        "post_date": "2023-02-20 10:00:00"
+      },
+      {
+        "post_title": "Health Post Published in 2022",
+        "post_content": "This health post was published in 2022.",
+        "post_status": "publish",
+        "post_category": [
+          "health"
+        ],
+        "post_tag": [
+          "wellness"
+        ],
+        "post_date": "2022-07-15 09:00:00"
+      }
+    ],
+    "expected": [
+      0,
+      1
+    ]
+  }
+]

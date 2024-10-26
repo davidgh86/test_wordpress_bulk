@@ -1,386 +1,489 @@
 [
-    {
-        "scheduler": {
-            "scheduler_name": "Expresión con Tag y AND",
-            "cron_expression": "*/5 * * * *",
-            "matchers": [
-                {
-                    "type": "tag",
-                    "value": "sports",
-                    "order": 0
-                }
-            ]
-        },
-        "posts": [
-            {
-                "post_title": "Post for Expresión con Tag y AND",
-                "post_content": "Content to match expression for Expresión con Tag y AND",
-                "post_status": "publish",
-                "post_category": ["jobs"],
-                "post_tag": ["sports"]
-            },
-            {
-                "post_title": "Another post for Expresión con Tag y AND",
-                "post_content": "Another content for Expresión con Tag y AND",
-                "post_status": "future",
-                "post_category": ["state"],
-                "post_tag": ["news"]
-            }
+  {
+    "name": "testeo1",
+    "scheduler": {
+      "scheduler_name": "Expresión con Tag y AND",
+      "cron_expression": "*/5 * * * *",
+      "matchers": [
+        {
+          "type": "tag",
+          "value": "sports",
+          "order": 0
+        }
+      ]
+    },
+    "posts": [
+      {
+        "post_title": "Post for Expresión con Tag y AND",
+        "post_content": "Content to match expression for Expresión con Tag y AND",
+        "post_status": "publish",
+        "post_category": [
+          "jobs"
         ],
-        "expected": [0]
-    },
-    {
-        "scheduler": {
-            "scheduler_name": "Expresión con Tag y OR",
-            "cron_expression": "*/10 * * * *",
-            "matchers": [
-                {
-                    "type": "tag",
-                    "value": "news",
-                    "order": 0
-                },
-                {
-                    "type": "operator",
-                    "value": "OR",
-                    "order": 1
-                },
-                {
-                    "type": "tag",
-                    "value": "technology",
-                    "order": 2
-                }
-            ]
-        },
-        "posts": [
-            {
-                "post_title": "Post for Expresión con Tag OR Technology",
-                "post_content": "This post matches the tag 'technology' and should be included.",
-                "post_status": "publish",
-                "post_category": ["tech"],
-                "post_tag": ["technology"]
-            },
-            {
-                "post_title": "Post with News Tag",
-                "post_content": "This post matches the tag 'news' and should be included.",
-                "post_status": "publish",
-                "post_category": ["politics"],
-                "post_tag": ["news"]
-            },
-            {
-                "post_title": "Non-matching post",
-                "post_content": "This post has a tag that doesn't match the scheduler.",
-                "post_status": "publish",
-                "post_category": ["sports"],
-                "post_tag": ["sports"]
-            }
+        "post_tag": [
+          "sports"
+        ]
+      },
+      {
+        "post_title": "Another post for Expresión con Tag y AND",
+        "post_content": "Another content for Expresión con Tag y AND",
+        "post_status": "future",
+        "post_category": [
+          "state"
         ],
-        "expected": [0, 1]
-    },
-    {
-        "scheduler": {
-            "xpr": "dfasdfa",
-            "scheduler_name": "Expresión con Tag y Categoría AND",
-            "cron_expression": "*/15 * * * *",
-            "matchers": [
-                {
-                    "type": "tag",
-                    "value": "health",
-                    "order": 0
-                },
-                {
-                    "type": "operator",
-                    "value": "AND",
-                    "order": 1
-                },
-                {
-                    "type": "category",
-                    "value": "lifestyle",
-                    "order": 2
-                }
-            ]
+        "post_tag": [
+          "news"
+        ]
+      }
+    ],
+    "expected": [
+      0
+    ]
+  },
+  {
+    "name": "testeo2",
+    "scheduler": {
+      "scheduler_name": "Expresión con Tag y OR",
+      "cron_expression": "*/10 * * * *",
+      "matchers": [
+        {
+          "type": "tag",
+          "value": "news",
+          "order": 0
         },
-        "posts": [
-            {
-                "post_title": "Post for Expresión with Health Tag and Lifestyle Category",
-                "post_content": "This post matches both the tag 'health' and the category 'lifestyle'.",
-                "post_status": "publish",
-                "post_category": ["lifestyle"],
-                "post_tag": ["health"]
-            },
-            {
-                "post_title": "Post with Health Tag but Wrong Category",
-                "post_content": "This post has the tag 'health' but doesn't match the category.",
-                "post_status": "publish",
-                "post_category": ["tech"],
-                "post_tag": ["health"]
-            },
-            {
-                "post_title": "Post with Lifestyle Category but No Health Tag",
-                "post_content": "This post has the category 'lifestyle' but doesn't match the tag.",
-                "post_status": "publish",
-                "post_category": ["lifestyle"],
-                "post_tag": ["fitness"]
-            }
+        {
+          "type": "operator",
+          "value": "OR",
+          "order": 1
+        },
+        {
+          "type": "tag",
+          "value": "technology",
+          "order": 2
+        }
+      ]
+    },
+    "posts": [
+      {
+        "post_title": "Post for Expresión con Tag OR Technology",
+        "post_content": "This post matches the tag 'technology' and should be included.",
+        "post_status": "publish",
+        "post_category": [
+          "tech"
         ],
-        "expected": [0]
-    },
-    {
-    "scheduler": {
-        "scheduler_name": "Expresión con fecha mínima",
-        "cron_expression": "*/10 * * * *",
-        "matchers": [
-            {
-                "type": "datetime_min",
-                "value": "2023-01-01 00:00:00",
-                "order": 0
-            }
+        "post_tag": [
+          "technology"
         ]
+      },
+      {
+        "post_title": "Post with News Tag",
+        "post_content": "This post matches the tag 'news' and should be included.",
+        "post_status": "publish",
+        "post_category": [
+          "politics"
+        ],
+        "post_tag": [
+          "news"
+        ]
+      },
+      {
+        "post_title": "Non-matching post",
+        "post_content": "This post has a tag that doesn't match the scheduler.",
+        "post_status": "publish",
+        "post_category": [
+          "sports"
+        ],
+        "post_tag": [
+          "sports"
+        ]
+      }
+    ],
+    "expected": [
+      0,
+      1
+    ]
+  },
+  {
+    "name": "testeo3",
+    "scheduler": {
+      "xpr": "dfasdfa",
+      "scheduler_name": "Expresión con Tag y Categoría AND",
+      "cron_expression": "*/15 * * * *",
+      "matchers": [
+        {
+          "type": "tag",
+          "value": "health",
+          "order": 0
+        },
+        {
+          "type": "operator",
+          "value": "AND",
+          "order": 1
+        },
+        {
+          "type": "category",
+          "value": "lifestyle",
+          "order": 2
+        }
+      ]
     },
     "posts": [
-        {
-            "post_title": "Post published after 2023",
-            "post_content": "This post was published after January 1, 2023.",
-            "post_status": "publish",
-            "post_category": ["news"],
-            "post_tag": ["latest"],
-            "post_date": "2023-05-10 12:00:00"
-        },
-        {
-            "post_title": "Post published before 2023",
-            "post_content": "This post was published before January 1, 2023.",
-            "post_status": "publish",
-            "post_category": ["news"],
-            "post_tag": ["old"],
-            "post_date": "2022-12-20 12:00:00"
-        }
-    ],
-    "expected": [0]
-},
-    {
-    "scheduler": {
-        "scheduler_name": "Expresión con Categoría y Fecha Mínima",
-        "cron_expression": "0 12 * * *",
-        "matchers": [
-            {
-                "type": "category",
-                "value": "news",
-                "order": 0
-            },
-            {
-                "type": "operator",
-                "value": "AND",
-                "order": 1
-            },
-            {
-                "type": "datetime_min",
-                "value": "2023-01-01 00:00:00",
-                "order": 2
-            }
+      {
+        "post_title": "Post for Expresión with Health Tag and Lifestyle Category",
+        "post_content": "This post matches both the tag 'health' and the category 'lifestyle'.",
+        "post_status": "publish",
+        "post_category": [
+          "lifestyle"
+        ],
+        "post_tag": [
+          "health"
         ]
+      },
+      {
+        "post_title": "Post with Health Tag but Wrong Category",
+        "post_content": "This post has the tag 'health' but doesn't match the category.",
+        "post_status": "publish",
+        "post_category": [
+          "tech"
+        ],
+        "post_tag": [
+          "health"
+        ]
+      },
+      {
+        "post_title": "Post with Lifestyle Category but No Health Tag",
+        "post_content": "This post has the category 'lifestyle' but doesn't match the tag.",
+        "post_status": "publish",
+        "post_category": [
+          "lifestyle"
+        ],
+        "post_tag": [
+          "fitness"
+        ]
+      }
+    ],
+    "expected": [
+      0
+    ]
+  },
+  {
+    "name": "testeo4",
+    "scheduler": {
+      "scheduler_name": "Expresión con fecha mínima",
+      "cron_expression": "*/10 * * * *",
+      "matchers": [
+        {
+          "type": "datetime_min",
+          "value": "2023-01-01 00:00:00",
+          "order": 0
+        }
+      ]
     },
     "posts": [
-        {
-            "post_title": "News Post After 2023",
-            "post_content": "This is a news post published after January 1, 2023.",
-            "post_status": "publish",
-            "post_category": ["news"],
-            "post_tag": ["breaking-news"],
-            "post_date": "2023-05-10 12:00:00"
-        },
-        {
-            "post_title": "Old News Post Before 2023",
-            "post_content": "This is a news post published before January 1, 2023.",
-            "post_status": "publish",
-            "post_category": ["news"],
-            "post_tag": ["archive"],
-            "post_date": "2022-12-20 12:00:00"
-        },
-        {
-            "post_title": "Technology Post After 2023",
-            "post_content": "This is a technology post published after January 1, 2023.",
-            "post_status": "publish",
-            "post_category": ["tech"],
-            "post_tag": ["tech-news"],
-            "post_date": "2023-05-10 12:00:00"
-        }
+      {
+        "post_title": "Post published after 2023",
+        "post_content": "This post was published after January 1, 2023.",
+        "post_status": "publish",
+        "post_category": [
+          "news"
+        ],
+        "post_tag": [
+          "latest"
+        ],
+        "post_date": "2023-05-10 12:00:00"
+      },
+      {
+        "post_title": "Post published before 2023",
+        "post_content": "This post was published before January 1, 2023.",
+        "post_status": "publish",
+        "post_category": [
+          "news"
+        ],
+        "post_tag": [
+          "old"
+        ],
+        "post_date": "2022-12-20 12:00:00"
+      }
     ],
-    "expected": [0]
-},
-    {
+    "expected": [
+      0
+    ]
+  },
+  {
+    "name": "testeo5",
     "scheduler": {
-        "scheduler_name": "Expresión Compleja con Tags, Categoría, Estado y Fecha",
-        "cron_expression": "0 18 * * *",
-        "matchers": [
-            {
-                "type": "tag",
-                "value": "technology",
-                "order": 0
-            },
-            {
-                "type": "operator",
-                "value": "OR",
-                "order": 1
-            },
-            {
-                "type": "category",
-                "value": "science",
-                "order": 2
-            },
-            {
-                "type": "operator",
-                "value": "AND",
-                "order": 3
-            },
-            {
-                "type": "status",
-                "value": "publish",
-                "order": 4
-            },
-            {
-                "type": "operator",
-                "value": "AND",
-                "order": 5
-            },
-            {
-                "type": "datetime_min",
-                "value": "2022-01-01 00:00:00",
-                "order": 6
-            }
-        ]
+      "scheduler_name": "Expresión con Categoría y Fecha Mínima",
+      "cron_expression": "0 12 * * *",
+      "matchers": [
+        {
+          "type": "category",
+          "value": "news",
+          "order": 0
+        },
+        {
+          "type": "operator",
+          "value": "AND",
+          "order": 1
+        },
+        {
+          "type": "datetime_min",
+          "value": "2023-01-01 00:00:00",
+          "order": 2
+        }
+      ]
     },
     "posts": [
-        {
-            "post_title": "Tech Post Published in 2023",
-            "post_content": "This technology post was published in 2023.",
-            "post_status": "publish",
-            "post_category": ["tech"],
-            "post_tag": ["technology"],
-            "post_date": "2023-06-15 10:00:00"
-        },
-        {
-            "post_title": "Science Post Published in 2022",
-            "post_content": "This science post was published in 2022.",
-            "post_status": "publish",
-            "post_category": ["science"],
-            "post_tag": ["research"],
-            "post_date": "2022-03-10 14:00:00"
-        },
-        {
-            "post_title": "Unpublished Science Post",
-            "post_content": "This science post is unpublished.",
-            "post_status": "draft",
-            "post_category": ["science"],
-            "post_tag": ["innovation"],
-            "post_date": "2023-02-20 10:00:00"
-        },
-        {
-            "post_title": "Health Post Published in 2022",
-            "post_content": "This health post was published in 2022.",
-            "post_status": "publish",
-            "post_category": ["health"],
-            "post_tag": ["wellness"],
-            "post_date": "2022-07-15 09:00:00"
-        }
+      {
+        "post_title": "News Post After 2023",
+        "post_content": "This is a news post published after January 1, 2023.",
+        "post_status": "publish",
+        "post_category": [
+          "news"
+        ],
+        "post_tag": [
+          "breaking-news"
+        ],
+        "post_date": "2023-05-10 12:00:00"
+      },
+      {
+        "post_title": "Old News Post Before 2023",
+        "post_content": "This is a news post published before January 1, 2023.",
+        "post_status": "publish",
+        "post_category": [
+          "news"
+        ],
+        "post_tag": [
+          "archive"
+        ],
+        "post_date": "2022-12-20 12:00:00"
+      },
+      {
+        "post_title": "Technology Post After 2023",
+        "post_content": "This is a technology post published after January 1, 2023.",
+        "post_status": "publish",
+        "post_category": [
+          "tech"
+        ],
+        "post_tag": [
+          "tech-news"
+        ],
+        "post_date": "2023-05-10 12:00:00"
+      }
     ],
-    "expected": [0, 1]
-},
-       {
+    "expected": [
+      0
+    ]
+  },
+  {
+    "name": "testeo6",
     "scheduler": {
-        "scheduler_name": "Test con Paréntesis Complejo",
-        "cron_expression": "*/10 * * * *",
-        "matchers": [
-            {
-                "type": "operator",
-                "value": "(",
-                "order": 0
-            },
-            {
-                "type": "category",
-                "value": "health",
-                "order": 1
-            },
-            {
-                "type": "operator",
-                "value": "AND",
-                "order": 2
-            },
-            {
-                "type": "status",
-                "value": "publish",
-                "order": 3
-            },
-            {
-                "type": "operator",
-                "value": ")",
-                "order": 4
-            },
-            {
-                "type": "operator",
-                "value": "OR",
-                "order": 5
-            },
-            {
-                "type": "operator",
-                "value": "(",
-                "order": 6
-            },
-            {
-                "type": "category",
-                "value": "tech",
-                "order": 7
-            },
-            {
-                "type": "operator",
-                "value": "AND",
-                "order": 8
-            },
-            {
-                "type": "status",
-                "value": "draft",
-                "order": 9
-            },
-            {
-                "type": "operator",
-                "value": ")",
-                "order": 10
-            }
-        ]
+      "scheduler_name": "Expresión Compleja con Tags, Categoría, Estado y Fecha",
+      "cron_expression": "0 18 * * *",
+      "matchers": [
+        {
+          "type": "tag",
+          "value": "technology",
+          "order": 0
+        },
+        {
+          "type": "operator",
+          "value": "OR",
+          "order": 1
+        },
+        {
+          "type": "category",
+          "value": "science",
+          "order": 2
+        },
+        {
+          "type": "operator",
+          "value": "AND",
+          "order": 3
+        },
+        {
+          "type": "status",
+          "value": "publish",
+          "order": 4
+        },
+        {
+          "type": "operator",
+          "value": "AND",
+          "order": 5
+        },
+        {
+          "type": "datetime_min",
+          "value": "2022-01-01 00:00:00",
+          "order": 6
+        }
+      ]
     },
     "posts": [
-        {
-            "post_title": "Health Post Published",
-            "post_content": "This is a health post that is published.",
-            "post_status": "publish",
-            "post_category": ["health"],
-            "post_tag": ["wellness"]
-        },
-        {
-            "post_title": "Tech Post Draft",
-            "post_content": "This is a tech post that is in draft.",
-            "post_status": "draft",
-            "post_category": ["tech"],
-            "post_tag": ["technology"]
-        },
-        {
-            "post_title": "Tech Post Published",
-            "post_content": "This is a tech post that is published.",
-            "post_status": "publish",
-            "post_category": ["tech"],
-            "post_tag": ["technology"]
-        },
-        {
-            "post_title": "Random Post",
-            "post_content": "This is a post in a random category.",
-            "post_status": "publish",
-            "post_category": ["random"],
-            "post_tag": ["misc"]
-        }
+      {
+        "post_title": "Tech Post Published in 2023",
+        "post_content": "This technology post was published in 2023.",
+        "post_status": "publish",
+        "post_category": [
+          "tech"
+        ],
+        "post_tag": [
+          "technology"
+        ],
+        "post_date": "2023-06-15 10:00:00"
+      },
+      {
+        "post_title": "Science Post Published in 2022",
+        "post_content": "This science post was published in 2022.",
+        "post_status": "publish",
+        "post_category": [
+          "science"
+        ],
+        "post_tag": [
+          "research"
+        ],
+        "post_date": "2022-03-10 14:00:00"
+      },
+      {
+        "post_title": "Unpublished Science Post",
+        "post_content": "This science post is unpublished.",
+        "post_status": "draft",
+        "post_category": [
+          "science"
+        ],
+        "post_tag": [
+          "innovation"
+        ],
+        "post_date": "2023-02-20 10:00:00"
+      },
+      {
+        "post_title": "Health Post Published in 2022",
+        "post_content": "This health post was published in 2022.",
+        "post_status": "publish",
+        "post_category": [
+          "health"
+        ],
+        "post_tag": [
+          "wellness"
+        ],
+        "post_date": "2022-07-15 09:00:00"
+      }
     ],
-    "expected": [0, 1]
-}
-
-
-
-
-
+    "expected": [
+      0,
+      1
+    ]
+  },
+  {
+    "name": "testeo7",
+    "scheduler": {
+      "scheduler_name": "Test con Paréntesis Complejo",
+      "cron_expression": "*/10 * * * *",
+      "matchers": [
+        {
+          "type": "operator",
+          "value": "(",
+          "order": 0
+        },
+        {
+          "type": "category",
+          "value": "health",
+          "order": 1
+        },
+        {
+          "type": "operator",
+          "value": "AND",
+          "order": 2
+        },
+        {
+          "type": "status",
+          "value": "publish",
+          "order": 3
+        },
+        {
+          "type": "operator",
+          "value": ")",
+          "order": 4
+        },
+        {
+          "type": "operator",
+          "value": "OR",
+          "order": 5
+        },
+        {
+          "type": "operator",
+          "value": "(",
+          "order": 6
+        },
+        {
+          "type": "category",
+          "value": "tech",
+          "order": 7
+        },
+        {
+          "type": "operator",
+          "value": "AND",
+          "order": 8
+        },
+        {
+          "type": "status",
+          "value": "draft",
+          "order": 9
+        },
+        {
+          "type": "operator",
+          "value": ")",
+          "order": 10
+        }
+      ]
+    },
+    "posts": [
+      {
+        "post_title": "Health Post Published",
+        "post_content": "This is a health post that is published.",
+        "post_status": "publish",
+        "post_category": [
+          "health"
+        ],
+        "post_tag": [
+          "wellness"
+        ]
+      },
+      {
+        "post_title": "Tech Post Draft",
+        "post_content": "This is a tech post that is in draft.",
+        "post_status": "draft",
+        "post_category": [
+          "tech"
+        ],
+        "post_tag": [
+          "technology"
+        ]
+      },
+      {
+        "post_title": "Tech Post Published",
+        "post_content": "This is a tech post that is published.",
+        "post_status": "publish",
+        "post_category": [
+          "tech"
+        ],
+        "post_tag": [
+          "technology"
+        ]
+      },
+      {
+        "post_title": "Random Post",
+        "post_content": "This is a post in a random category.",
+        "post_status": "publish",
+        "post_category": [
+          "random"
+        ],
+        "post_tag": [
+          "misc"
+        ]
+      }
+    ],
+    "expected": [
+      0,
+      1
+    ]
+  }
 ]

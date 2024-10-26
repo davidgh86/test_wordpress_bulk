@@ -1,5 +1,4 @@
 import json
-import time
 
 import requests
 import base64
@@ -41,18 +40,25 @@ class RESTAPIError(Exception):
 
 # Borrar todos los posts
 def delete_all_posts():
-    url = WP_URL + 'posts?per_page=100'
-    response = requests.get(url, headers=HEADERS)
-    if response.status_code != 200:
-        raise RESTAPIError(f"Failed to retrieve posts: {response.text}")
+    page = 1
+    while True:
+        url = f"{WP_URL}posts?per_page=100&page={page}&status=any"
+        response = requests.get(url, headers=HEADERS)
 
-    posts = response.json()
-    for post in posts:
-        delete_url = WP_URL + f'posts/{post["id"]}?force=true'
-        delete_response = requests.delete(delete_url, headers=HEADERS)
-        if delete_response.status_code != 200:
-            raise RESTAPIError(f"Failed to delete post {post['id']}: {delete_response.text}")
-        print(f"Deleted post {post['id']}")
+        if response.status_code != 200:
+            raise RESTAPIError(f"Failed to retrieve posts: {response.text}")
+
+        posts = response.json()
+        if not posts:
+            break  # No more posts to delete
+
+        for post in posts:
+            delete_url = WP_URL + f'posts/{post["id"]}?force=true'
+            delete_response = requests.delete(delete_url, headers=HEADERS)
+            if delete_response.status_code != 200:
+                raise RESTAPIError(f"Failed to delete post {post['id']}: {delete_response.text}")
+            print(f"Deleted post {post['id']}")
+        page += 1
 
 
 # Borrar todos los schedulers
@@ -227,12 +233,29 @@ def get_default_category_id():
     settings = response.json()
     return settings.get('default_category', 1)  # La categoría por defecto es la ID 1 en muchos casos
 
+
 def get_post_count():
-    url = WP_URL + 'posts?per_page=100'
-    response = requests.get(url, headers=HEADERS)
-    if response.status_code != 200:
-        raise RESTAPIError(f"Failed to retrieve post count: {response.text}")
-    return len(response.json())
+    url = WP_URL + 'posts'
+    total_posts = 0
+    page = 1
+
+    while True:
+        # Solicitar una página de resultados con todos los estados
+        response = requests.get(f"{url}?per_page=100&status=any&page={page}", headers=HEADERS)
+
+        if response.status_code != 200:
+            raise RESTAPIError(f"Failed to retrieve post count: {response.text}")
+
+        posts = response.json()
+        total_posts += len(posts)
+
+        # Si la longitud de posts es menor que el límite, significa que no hay más páginas
+        if len(posts) < 100:
+            break
+
+        page += 1  # Avanzar a la siguiente página
+
+    return total_posts
 
 
 # Borrar todas las categorías excepto la predeterminada
@@ -277,8 +300,10 @@ def delete_all_comments():
 
 
 # Test principal usando pytest
-@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')))
-#@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')))
+#@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
+#@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
+@pytest.mark.parametrize("test_case", json.load(open('current2.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
+#@pytest.mark.parametrize("test_case", json.load(open('current3.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 def test_scheduler_system(test_case):
     try:
         delete_all_comments()
@@ -286,7 +311,6 @@ def test_scheduler_system(test_case):
         delete_all_categories()
         delete_all_tags()
         delete_all_schedulers()
-        time.sleep(1)
 
         # Assert initial post count is zero
         assert get_post_count() == 0, "Expected 0 posts at start, found otherwise."
@@ -304,7 +328,6 @@ def test_scheduler_system(test_case):
         for post_data in posts:
             post_id = create_post(post_data)
             post_ids.append(str(post_id))
-            time.sleep(1)
 
         assert get_post_count() == len(posts), f"Expected {len(posts)} posts created, but found different."
 
