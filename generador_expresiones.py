@@ -3,7 +3,7 @@ import random
 OPERATORS = ["AND", "OR", "NOT"]
 PREDICATE_FORMAT = "P{}"
 MAX_PREDICATES = 20  # Limita la cantidad de predicados en una expresión
-MAX_DEPTH = 3  # Máxima profundidad de anidación de paréntesis
+MAX_DEPTH = 5  # Máxima profundidad de anidación de paréntesis
 
 
 def generate_predicate(pred_count):
@@ -37,7 +37,6 @@ def generate_expression(depth=0):
         expression += f" {operator} {generate_expression(depth + 1)}"
 
     return expression
-
 
 if __name__ == "__main__":
     for _ in range(5):  # Genera 5 ejemplos
