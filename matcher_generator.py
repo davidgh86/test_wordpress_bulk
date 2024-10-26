@@ -73,6 +73,12 @@ def generate_case(case_name):
         }
         posts.append(post)
 
+    # Calcular el expected basándose en los matchers
+    expected = []
+    for idx, post in enumerate(posts):
+        if matches_conditions(post, matchers):
+            expected.append(idx)
+
     # Configuración del caso de prueba
     return {
         "name": case_name,
@@ -82,19 +88,19 @@ def generate_case(case_name):
             "matchers": matchers
         },
         "posts": posts,
-        "expected": [i for i in range(num_posts) if random.choice([True, False])]
+        "expected": expected
     }
 
 
-def generate_test_cases(num_cases=10):
-    """Genera varios casos de prueba y los guarda en un archivo JSON."""
-    test_cases = [generate_case(f"TestCase_{i}") for i in range(num_cases)]
-
-    with open("generated_test_cases.json", "w") as f:
-        json.dump(test_cases, f, indent=4)
-
-    print(f"{num_cases} test cases generated and saved to generated_test_cases.json")
-
-
-# Genera 10 casos de prueba y guárdalos en un archivo JSON
-generate_test_cases(10)
+def matches_conditions(post, matchers):
+    for matcher in matchers:
+        if matcher['type'] == 'tag' and matcher['value'] not in post['post_tag']:
+            return False
+        if matcher['type'] == 'category' and matcher['value'] not in post['post_category']:
+            return False
+        if matcher['type'] == 'status' and matcher['value'] != post['post_status']:
+            return False
+        if matcher['type'] == 'datetime_min' and post['post_date'] < matcher['value']:
+            return False
+        # No se evalúan operadores en este ejemplo simplificado
+    return True
