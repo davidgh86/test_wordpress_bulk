@@ -3,6 +3,7 @@ import json
 import requests
 import base64
 import pytest
+from _pytest.outcomes import Failed
 
 from matcher_generator2 import generate_test_cases, generate_test_case
 
@@ -359,16 +360,17 @@ def test_with_generated():
 
 
 # Generate test cases for 100 iterations with explicit "id" values
-generated_cases = [{"id": i, "data": case} for i, case in enumerate(generate_test_cases(i) for i in range(1, 101))]
+generated_cases = generate_test_cases(100)
 
 # Parametrize the test with the generated cases and unique IDs
-@pytest.mark.parametrize("generated_matcher", generated_cases, ids=lambda val: f"test_run_{val.get('id', 'unknown')}")
-def test_with_generated(generated_matcher):
+@pytest.mark.parametrize("generated_test_case", generated_cases, ids=lambda val: f"test_run_{val["scheduler"]["scheduler_name"]}")
+def test_with_generated(generated_test_case):
     try:
-        test_scheduler_system(generated_matcher)
-    except AssertionError as e:
+        test_scheduler_system(generated_test_case)
+    except (AssertionError, Failed, Exception) as e:
         # Save the generated matcher JSON if the test fails
-        with open(f"failed_generated_matcher_{generated_matcher['id']}.json", "w", encoding="utf-8") as f:
-            json.dump(generated_matcher, f, ensure_ascii=False, indent=4)
+        with open(f"output/failed_generated_matcher_{str(generated_test_case["scheduler"]["scheduler_name"]).replace(" ", "_")}.json", "w", encoding="utf-8") as f:
+            json.dump([generated_test_case], f, ensure_ascii=False, indent=4)
         # Re-raise the assertion error to mark the test as failed
         raise e
+
