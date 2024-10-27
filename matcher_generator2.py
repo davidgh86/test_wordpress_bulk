@@ -63,15 +63,31 @@ def generate_test_case(case_name):
     expression = expr_tree.generate_expression()
     expression_string = str(expression)
 
-    predicates = re.findall(r"\bP\d+\b", expression_string)
+    pattern = r'(\bAND\b|\bOR\b|\bNOT\b|\(|\)|P\d+)'
 
+    # Split the string based on the pattern
+    matchers_string = re.findall(pattern, expression_string)
+
+    matchers_dict = dict()
     matchers_array = []
-    matchers = dict()
-    i = 0
-    for pred in predicates:
-        matchers[pred] = generate_matcher(i)
-        matchers_array.append(matchers[pred])
-        i += 1
+
+    matcher_index = 0
+
+    for matcher_string in matchers_string:
+        if matcher_string.startswith("P"):
+            generated_matcher = generate_matcher(matcher_index)
+            matchers_dict[matcher_string] = generated_matcher
+            matchers_array.append(generated_matcher)
+        else:
+            matchers_array.append({
+                "type": "operator",
+                "value": matcher_string,
+                "order": matcher_index
+            })
+        matcher_index+=1
+
+
+
 
     number_of_posts = random.randint(1, 10)
 
@@ -83,8 +99,8 @@ def generate_test_case(case_name):
         posts.append(post)
         truth_values = dict()
 
-        for pred in predicates:
-            matcher = matchers[pred]
+        for pred in matchers_dict.keys():
+            matcher = matchers_dict[pred]
             evaluation = evaluate_post_against_matcher(post, matcher)
             truth_values[pred] = evaluation
 
