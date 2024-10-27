@@ -4,6 +4,8 @@ import requests
 import base64
 import pytest
 
+from matcher_generator2 import generate_test_cases
+
 # Variables globales
 
 HOSTNAME = "http://ccccc.local"
@@ -302,7 +304,7 @@ def delete_all_comments():
 # Test principal usando pytest
 #@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 #@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
-@pytest.mark.parametrize("test_case", json.load(open('current2.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
+#@pytest.mark.parametrize("test_case", json.load(open('current2.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 #@pytest.mark.parametrize("test_case", json.load(open('current3.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 def test_scheduler_system(test_case):
     try:
@@ -342,3 +344,8 @@ def test_scheduler_system(test_case):
         pytest.fail(f"API request failed: {str(e)}")
     except Exception as e:
         pytest.fail(f"An unexpected error occurred: {str(e)}")
+
+
+def test_with_generated():
+    generated_matcher = generate_test_cases(1)
+    test_scheduler_system(generated_matcher)
