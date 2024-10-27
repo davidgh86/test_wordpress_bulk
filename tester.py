@@ -1,4 +1,7 @@
+import glob
 import json
+import os
+import re
 
 import requests
 import base64
@@ -302,11 +305,51 @@ def delete_all_comments():
         print(f"Deleted comment {comment['id']}")
 
 
+def get_next_filename(directory="output", base_name="failed_generated_matcher_Test_Case"):
+    # Define el patrón completo con el directorio
+    pattern = os.path.join(directory, f"{base_name}_*.json")
+
+    # Encuentra todos los archivos que coinciden con el patrón en el directorio
+    files = glob.glob(pattern)
+
+    # Extrae los números de cada archivo
+    numbers = []
+    for file in files:
+        match = re.search(rf"{base_name}_(\d+)\.json", file)
+        if match:
+            numbers.append(int(match.group(1)))
+
+    # Encuentra el siguiente número
+    next_number = max(numbers) + 1 if numbers else 1
+    next_file_name = os.path.join(directory, f"{base_name}_{next_number}.json")
+
+    return next_file_name
+
+
+def get_first_matching_filename(directory="output", base_name="failed_generated_matcher_Test_Case"):
+    # Define the search pattern for the files in the specified directory
+    pattern = os.path.join(directory, f"{base_name}_*.json")
+
+    # Find all files matching the pattern
+    files = glob.glob(pattern)
+
+    # Sort files by the number extracted from the filename
+    files_sorted = sorted(
+        files,
+        key=lambda file: int(re.search(rf"{base_name}_(\d+)\.json", file).group(1))
+    )
+
+    # Return the first file or None if no matching file is found
+    return files_sorted[0] if files_sorted else None
+
+
+testing_file = get_first_matching_filename()
+
 # Test principal usando pytest
-@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
+#@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 #@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 #@pytest.mark.parametrize("test_case", json.load(open('current2.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
-#@pytest.mark.parametrize("test_case", json.load(open('current3.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
+@pytest.mark.parametrize("test_case", json.load(open(testing_file, 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 def test_scheduler_system(test_case):
     try:
         delete_all_comments()
@@ -369,7 +412,7 @@ def test_with_generated(generated_test_case):
         test_scheduler_system(generated_test_case)
     except (AssertionError, Failed, Exception) as e:
         # Save the generated matcher JSON if the test fails
-        with open(f"output/failed_generated_matcher_{str(generated_test_case["scheduler"]["scheduler_name"]).replace(" ", "_")}.json", "w", encoding="utf-8") as f:
+        with open(get_next_filename(), "w", encoding="utf-8") as f:
             json.dump([generated_test_case], f, ensure_ascii=False, indent=4)
         # Re-raise the assertion error to mark the test as failed
         raise e

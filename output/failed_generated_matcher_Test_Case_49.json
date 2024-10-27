@@ -1,0 +1,156 @@
+[
+    {
+        "scheduler": {
+            "scheduler_name": "Test Case 49",
+            "cron_expression": "*/10 * * * *",
+            "matchers": [
+                {
+                    "type": "operator",
+                    "value": "(",
+                    "order": 0
+                },
+                {
+                    "type": "category",
+                    "value": "sample_category_4",
+                    "order": 1
+                },
+                {
+                    "type": "operator",
+                    "value": "OR",
+                    "order": 2
+                },
+                {
+                    "type": "comment_count_min",
+                    "value": 47,
+                    "order": 3
+                },
+                {
+                    "type": "operator",
+                    "value": ")",
+                    "order": 4
+                }
+            ]
+        },
+        "posts": [
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "draft",
+                "post_category": [
+                    "category_5"
+                ],
+                "post_tag": [
+                    "tag_4"
+                ],
+                "post_date": "2024-01-19 16:50:54",
+                "comment_count": 26,
+                "comment_status": "closed",
+                "post_type": "post",
+                "modified_date": "2024-09-16 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "future",
+                "post_category": [
+                    "category_2"
+                ],
+                "post_tag": [
+                    "tag_5"
+                ],
+                "post_date": "2024-03-08 16:50:54",
+                "comment_count": 65,
+                "comment_status": "open",
+                "post_type": "page",
+                "modified_date": "2024-05-27 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "draft",
+                "post_category": [
+                    "category_2"
+                ],
+                "post_tag": [
+                    "tag_5"
+                ],
+                "post_date": "2024-07-11 16:50:54",
+                "comment_count": 92,
+                "comment_status": "closed",
+                "post_type": "page",
+                "modified_date": "2024-07-18 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "draft",
+                "post_category": [
+                    "category_5"
+                ],
+                "post_tag": [
+                    "tag_1"
+                ],
+                "post_date": "2024-03-09 16:50:54",
+                "comment_count": 65,
+                "comment_status": "open",
+                "post_type": "page",
+                "modified_date": "2023-12-15 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "draft",
+                "post_category": [
+                    "category_2"
+                ],
+                "post_tag": [
+                    "tag_3"
+                ],
+                "post_date": "2024-06-23 16:50:54",
+                "comment_count": 93,
+                "comment_status": "closed",
+                "post_type": "post",
+                "modified_date": "2024-09-02 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "publish",
+                "post_category": [
+                    "category_3"
+                ],
+                "post_tag": [
+                    "tag_1"
+                ],
+                "post_date": "2024-06-27 16:50:54",
+                "comment_count": 51,
+                "comment_status": "open",
+                "post_type": "post",
+                "modified_date": "2024-09-11 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "pending",
+                "post_category": [
+                    "category_4"
+                ],
+                "post_tag": [
+                    "tag_4"
+                ],
+                "post_date": "2024-06-16 16:50:54",
+                "comment_count": 6,
+                "comment_status": "closed",
+                "post_type": "post",
+                "modified_date": "2024-02-22 16:50:54"
+            }
+        ],
+        "expected": [
+            1,
+            2,
+            3,
+            4,
+            5
+        ]
+    }
+]

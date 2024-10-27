@@ -1,0 +1,178 @@
+[
+    {
+        "scheduler": {
+            "scheduler_name": "Test Case 12",
+            "cron_expression": "*/10 * * * *",
+            "matchers": [
+                {
+                    "type": "operator",
+                    "value": "NOT",
+                    "order": 0
+                },
+                {
+                    "type": "operator",
+                    "value": "(",
+                    "order": 1
+                },
+                {
+                    "type": "operator",
+                    "value": "NOT",
+                    "order": 2
+                },
+                {
+                    "type": "operator",
+                    "value": "(",
+                    "order": 3
+                },
+                {
+                    "type": "comment_count_min",
+                    "value": 87,
+                    "order": 4
+                },
+                {
+                    "type": "operator",
+                    "value": ")",
+                    "order": 5
+                },
+                {
+                    "type": "operator",
+                    "value": ")",
+                    "order": 6
+                }
+            ]
+        },
+        "posts": [
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "pending",
+                "post_category": [
+                    "category_1"
+                ],
+                "post_tag": [
+                    "tag_5"
+                ],
+                "post_date": "2024-10-02 16:50:54",
+                "comment_count": 21,
+                "comment_status": "closed",
+                "post_type": "post",
+                "modified_date": "2024-10-24 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "pending",
+                "post_category": [
+                    "category_4"
+                ],
+                "post_tag": [
+                    "tag_3"
+                ],
+                "post_date": "2024-10-19 16:50:54",
+                "comment_count": 27,
+                "comment_status": "closed",
+                "post_type": "page",
+                "modified_date": "2024-03-14 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "pending",
+                "post_category": [
+                    "category_3"
+                ],
+                "post_tag": [
+                    "tag_4"
+                ],
+                "post_date": "2024-02-12 16:50:54",
+                "comment_count": 20,
+                "comment_status": "closed",
+                "post_type": "post",
+                "modified_date": "2024-08-16 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "pending",
+                "post_category": [
+                    "category_3"
+                ],
+                "post_tag": [
+                    "tag_4"
+                ],
+                "post_date": "2024-02-14 16:50:54",
+                "comment_count": 46,
+                "comment_status": "closed",
+                "post_type": "page",
+                "modified_date": "2023-12-26 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "future",
+                "post_category": [
+                    "category_2"
+                ],
+                "post_tag": [
+                    "tag_5"
+                ],
+                "post_date": "2024-09-20 16:50:54",
+                "comment_count": 95,
+                "comment_status": "open",
+                "post_type": "post",
+                "modified_date": "2024-09-19 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "publish",
+                "post_category": [
+                    "category_5"
+                ],
+                "post_tag": [
+                    "tag_1"
+                ],
+                "post_date": "2024-04-10 16:50:54",
+                "comment_count": 60,
+                "comment_status": "open",
+                "post_type": "post",
+                "modified_date": "2024-02-16 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "draft",
+                "post_category": [
+                    "category_3"
+                ],
+                "post_tag": [
+                    "tag_5"
+                ],
+                "post_date": "2024-08-07 16:50:54",
+                "comment_count": 18,
+                "comment_status": "closed",
+                "post_type": "post",
+                "modified_date": "2024-08-27 16:50:54"
+            },
+            {
+                "post_title": "Generated Post",
+                "post_content": "Generated content for test case.",
+                "post_status": "publish",
+                "post_category": [
+                    "category_4"
+                ],
+                "post_tag": [
+                    "tag_4"
+                ],
+                "post_date": "2024-08-07 16:50:54",
+                "comment_count": 3,
+                "comment_status": "closed",
+                "post_type": "page",
+                "modified_date": "2024-03-08 16:50:54"
+            }
+        ],
+        "expected": [
+            4
+        ]
+    }
+]
