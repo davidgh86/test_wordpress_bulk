@@ -1,3 +1,9 @@
+import glob
+import json
+import os
+import re
+
+
 def evaluate_matchers(matchers, post):
     stack = []
 
@@ -90,384 +96,50 @@ def evaluate_expression(expr):
     return stack[0] if stack else False
 
 
-# Ejemplo de uso
-matchers = [
-                {
-                    "type": "operator",
-                    "value": "NOT",
-                    "order": 0
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 1
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 2
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 3
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 4
-                },
-                {
-                    "type": "content",
-                    "value": "sample_content",
-                    "order": 5
-                },
-                {
-                    "type": "operator",
-                    "value": "OR",
-                    "order": 6
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 7
-                },
-                {
-                    "type": "modified_date_min",
-                    "value": "2023-11-10 16:50:54",
-                    "order": 8
-                },
-                {
-                    "type": "operator",
-                    "value": "OR",
-                    "order": 9
-                },
-                {
-                    "type": "title",
-                    "value": "sample_title",
-                    "order": 10
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 11
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 12
-                },
-                {
-                    "type": "operator",
-                    "value": "OR",
-                    "order": 13
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 14
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 15
-                },
-                {
-                    "type": "modified_date_max",
-                    "value": "2024-06-23 16:50:54",
-                    "order": 16
-                },
-                {
-                    "type": "operator",
-                    "value": "AND",
-                    "order": 17
-                },
-                {
-                    "type": "tag",
-                    "value": "sample_tag_3",
-                    "order": 18
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 19
-                },
-                {
-                    "type": "operator",
-                    "value": "OR",
-                    "order": 20
-                },
-                {
-                    "type": "datetime_min",
-                    "value": "2024-04-06 16:50:54",
-                    "order": 21
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 22
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 23
-                },
-                {
-                    "type": "operator",
-                    "value": "AND",
-                    "order": 24
-                },
-                {
-                    "type": "operator",
-                    "value": "NOT",
-                    "order": 25
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 26
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 27
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 28
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 29
-                },
-                {
-                    "type": "title",
-                    "value": "sample_title",
-                    "order": 30
-                },
-                {
-                    "type": "operator",
-                    "value": "AND",
-                    "order": 31
-                },
-                {
-                    "type": "comment_status",
-                    "value": "sample_comment_status_5",
-                    "order": 32
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 33
-                },
-                {
-                    "type": "operator",
-                    "value": "AND",
-                    "order": 34
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 35
-                },
-                {
-                    "type": "category",
-                    "value": "sample_category_3",
-                    "order": 36
-                },
-                {
-                    "type": "operator",
-                    "value": "OR",
-                    "order": 37
-                },
-                {
-                    "type": "comment_count_min",
-                    "value": 12,
-                    "order": 38
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 39
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 40
-                },
-                {
-                    "type": "operator",
-                    "value": "OR",
-                    "order": 41
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 42
-                },
-                {
-                    "type": "operator",
-                    "value": "NOT",
-                    "order": 43
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 44
-                },
-                {
-                    "type": "datetime_min",
-                    "value": "2024-03-07 16:50:54",
-                    "order": 45
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 46
-                },
-                {
-                    "type": "operator",
-                    "value": "AND",
-                    "order": 47
-                },
-                {
-                    "type": "operator",
-                    "value": "(",
-                    "order": 48
-                },
-                {
-                    "type": "comment_count_min",
-                    "value": 55,
-                    "order": 49
-                },
-                {
-                    "type": "operator",
-                    "value": "OR",
-                    "order": 50
-                },
-                {
-                    "type": "status",
-                    "value": "sample_status_4",
-                    "order": 51
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 52
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 53
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 54
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 55
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 56
-                },
-                {
-                    "type": "operator",
-                    "value": ")",
-                    "order": 57
-                }
-            ]
+def get_file_names(directory="output", base_name="failed_generated_matcher_Test_Case"):
+    # Define the search pattern for the files in the specified directory
+    pattern = os.path.join(directory, f"{base_name}_*.json")
 
-posts = [
-            {
-                "post_title": "Generated Post",
-                "post_content": "Generated content for test case.",
-                "post_status": "future",
-                "post_category": [
-                    "category_1"
-                ],
-                "post_tag": [
-                    "tag_2"
-                ],
-                "post_date": "2024-09-04 16:50:54",
-                "comment_count": 56,
-                "comment_status": "closed",
-                "post_type": "post",
-                "modified_date": "2024-09-07 16:50:54"
-            },
-            {
-                "post_title": "Generated Post",
-                "post_content": "Generated content for test case.",
-                "post_status": "future",
-                "post_category": [
-                    "category_4"
-                ],
-                "post_tag": [
-                    "tag_1"
-                ],
-                "post_date": "2024-08-26 16:50:54",
-                "comment_count": 74,
-                "comment_status": "closed",
-                "post_type": "page",
-                "modified_date": "2024-07-17 16:50:54"
-            },
-            {
-                "post_title": "Generated Post",
-                "post_content": "Generated content for test case.",
-                "post_status": "future",
-                "post_category": [
-                    "category_1"
-                ],
-                "post_tag": [
-                    "tag_2"
-                ],
-                "post_date": "2023-12-19 16:50:54",
-                "comment_count": 0,
-                "comment_status": "closed",
-                "post_type": "post",
-                "modified_date": "2024-08-29 16:50:54"
-            },
-            {
-                "post_title": "Generated Post",
-                "post_content": "Generated content for test case.",
-                "post_status": "publish",
-                "post_category": [
-                    "category_2"
-                ],
-                "post_tag": [
-                    "tag_1"
-                ],
-                "post_date": "2024-07-17 16:50:54",
-                "comment_count": 6,
-                "comment_status": "open",
-                "post_type": "post",
-                "modified_date": "2024-01-29 16:50:54"
-            },
-            {
-                "post_title": "Generated Post",
-                "post_content": "Generated content for test case.",
-                "post_status": "draft",
-                "post_category": [
-                    "category_2"
-                ],
-                "post_tag": [
-                    "tag_1"
-                ],
-                "post_date": "2024-06-30 16:50:54",
-                "comment_count": 51,
-                "comment_status": "closed",
-                "post_type": "page",
-                "modified_date": "2023-12-06 16:50:54"
-            }
-        ]
+    # Find all files matching the pattern
+    files = glob.glob(pattern)
+
+    # Sort files by the number extracted from the filename
+    files_sorted = sorted(
+        files,
+        key=lambda file: int(re.search(rf"{base_name}_(\d+)\.json", file).group(1))
+    )
+
+    # Return the first file or None if no matching file is found
+    return files_sorted
+
+
+def get_json(path):
+    with open(path, 'r') as file:
+        data = json.load(file)
+        return data
+
+def get_matcher_and_posts(data):
+    return {
+        "matchers": data[0]["scheduler"]["matchers"],
+        "posts": data[0]["posts"]
+    }
+
+
 
 
 if __name__ == "__main__":
-    for i in range(len(posts)):
-        print(f"{i}-. {evaluate_matchers(matchers, posts[1])}")
+    file_names = get_file_names()
+
+    for file_name in file_names:
+        data = get_json(file_name)
+        matchers_and_posts = get_matcher_and_posts(data)
+        posts = matchers_and_posts["posts"]
+        matchers = matchers_and_posts["matchers"]
+        indexes = []
+        for i in range(len(posts)):
+            is_matching = evaluate_matchers(matchers, posts[i])
+            if is_matching:
+                indexes.append(i)
+        data[0]["expected"] = indexes
+        with open(file_name, 'w') as file:
+            json.dump(data, file, indent=4)
