@@ -302,7 +302,7 @@ def delete_all_comments():
 
 
 # Test principal usando pytest
-#@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
+@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 #@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 #@pytest.mark.parametrize("test_case", json.load(open('current2.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 #@pytest.mark.parametrize("test_case", json.load(open('current3.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
