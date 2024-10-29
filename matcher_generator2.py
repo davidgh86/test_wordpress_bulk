@@ -26,12 +26,20 @@ def generate_matcher(order):
         value = (datetime.now() - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
     elif matcher_type == "datetime_max":
         value = (datetime.now() + timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
-    elif matcher_type in ["tag", "category", "status", "comment_status", "post_type"]:
+    elif matcher_type in ["tag", "category"]: #, "status", "comment_status", "post_type"]:
         value = f"sample_{matcher_type}_{random.randint(1, 5)}"
-    elif matcher_type in ["title", "author", "content", "slug"]:
-        value = f"sample_{matcher_type}"
+    elif matcher_type == "comment_status":
+        value = random.choice(["open", "closed"])
+    elif matcher_type == "status":
+        value = random.choice(["publish", "draft", "pending", "future"])
+    elif matcher_type == "post_type":
+        value = random.choice(["post", "page"])
+    elif matcher_type in ["title", "content", "slug"]:
+        value = f"sample_{matcher_type}_{random.randint(0,3)}"
+    elif matcher_type == "author":
+        value = 1
     elif matcher_type in ["comment_count_min", "comment_count_max"]:
-        value = random.randint(0, 100)
+        value = random.randint(0, 10)
     elif matcher_type in ["modified_date_min", "modified_date_max"]:
         value = (datetime.now() - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
     else:
@@ -42,17 +50,28 @@ def generate_matcher(order):
 def generate_post():
     """Generate a random post with values for various fields."""
     post_date = (datetime.now() - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
+    post_status = random.choice(["publish", "draft", "pending", "future"])
+
+    comment_status = random.choice(["open", "closed"])
+
+    if post_status != "publish" or comment_status == "closed":
+        comment_count = 0
+    else:
+        comment_count = random.randint(0, 10)
+
     return {
         "post_title": f"Generated Post",
         "post_content": "Generated content for test case.",
-        "post_status": random.choice(["publish", "draft", "pending", "future"]),
+        "post_status": post_status,
         "post_category": [f"category_{random.randint(1, 5)}"],
         "post_tag": [f"tag_{random.randint(1, 5)}"],
         "post_date": post_date,
-        "comment_count": random.randint(0, 100),
-        "comment_status": random.choice(["open", "closed"]),
+        "comment_count": comment_count,
+        "comment_status": comment_status,
         "post_type": random.choice(["post", "page"]),
-        "modified_date": (datetime.now() - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
+        "modified_date": (datetime.now() - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT),
+        "post_slug": f"generated-post-{random.randint(1, 100)}",
+        "author": 1
     }
 
 
@@ -163,6 +182,14 @@ def evaluate_post_against_matcher(post, matcher):
         return post["modified_date"] <= matcher["value"]
     elif matcher["type"] == "post_type":
         return matcher["value"] == post["post_type"]
+    elif matcher["type"] == 'title':
+        return matcher['value'].lower() in post['post_title'].lower()
+    elif matcher["type"] == 'content':
+        return matcher['value'].lower() in post['post_content'].lower()
+    elif matcher["type"] == 'slug':
+        return matcher['value'].lower() in post['post_slug'].lower()
+    elif matcher["type"] == 'author':
+        return matcher['value'] == post["author"]
     else:
         return False
 

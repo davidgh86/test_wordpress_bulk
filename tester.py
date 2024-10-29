@@ -104,21 +104,29 @@ def create_comment(post_id, comment_content):
 
 
 # Crear un post específico con categorías, tags y comentarios
+
 def create_post(post_data):
     url = WP_URL + 'posts'
 
+    # Obtén las categorías y etiquetas, creando las que no existan.
     category_ids = [create_category_if_not_exists(cat) for cat in post_data.get('post_category', [])]
     tag_ids = [create_tag_if_not_exists(tag) for tag in post_data.get('post_tag', [])]
 
+    # Crea el payload con los nuevos valores incluidos, incluyendo fechas
     payload = {
         'title': post_data.get('post_title'),
         'content': post_data.get('post_content'),
         'status': post_data.get('post_status', 'draft'),
         'categories': category_ids,
         'tags': tag_ids,
-        'date': post_data.get('post_date')  # Añadir la fecha de publicación si está presente
+        'date': post_data.get('post_date'),      # Fecha de publicación en UTC
+        'modified': post_data.get('modified_date'),     # Fecha de modificación en UTC
+        'slug': post_data.get('post_slug'),
+        'author': post_data.get('author'),
+        'comment_status': post_data.get('comment_status')
     }
 
+    # Realiza la solicitud POST para crear el post
     response = requests.post(url, json=payload, headers=HEADERS)
     if response.status_code != 201:
         raise RESTAPIError(f"Failed to create post: {response.text}")
@@ -126,8 +134,9 @@ def create_post(post_data):
     post_id = response.json()['id']
     print(f"Post created successfully with ID: {post_id}")
 
-    if 'post_comment_count' in post_data:
-        for i in range(post_data['post_comment_count']):
+    # Crear comentarios si se especifica comment_count
+    if 'comment_count' in post_data:
+        for i in range(post_data['comment_count']):
             create_comment(post_id, f"Test comment {i + 1}")
 
     return post_id
