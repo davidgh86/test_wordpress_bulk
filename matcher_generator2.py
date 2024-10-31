@@ -2,6 +2,7 @@ import json
 import random
 import re
 from datetime import datetime, timedelta
+import uuid
 
 from expression_manager import ExpressionTree
 from generador_expresiones import generate_expression, OPERATORS  # Assuming this script is saved as expression_generator.py
@@ -23,9 +24,9 @@ def generate_matcher(order):
     matcher_type = random.choice(MATCHER_TYPES)
     """Generate a matcher based on the type."""
     if matcher_type == "datetime_min":
-        value = (datetime.now() - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
+        value = (datetime.now() + timedelta(days=random.randint(1, 365)) - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
     elif matcher_type == "datetime_max":
-        value = (datetime.now() + timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
+        value = (datetime.now() + timedelta(days=random.randint(1, 365)) - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
     elif matcher_type in ["tag", "category"]: #, "status", "comment_status", "post_type"]:
         value = f"sample_{matcher_type}_{random.randint(1, 5)}"
     elif matcher_type == "comment_status":
@@ -34,23 +35,43 @@ def generate_matcher(order):
         value = random.choice(["publish", "draft", "pending", "future"])
     elif matcher_type == "post_type":
         value = random.choice(["post", "page"])
-    elif matcher_type in ["title", "content", "slug"]:
-        value = f"sample_{matcher_type}_{random.randint(0,3)}"
+
+    elif matcher_type == "title":
+        value = f"Generated Post {random.randint(1,3)}"
+    elif matcher_type == "content":
+        value = f"Generated content for test case {random.randint(1,3)}."
+    elif matcher_type == "slug":
+        random_val = random.randint(1,2)
+        if random_val == 1:
+            new_uuid = previous_uuid
+        else:
+            new_uuid = uuid.uuid4()
+        value = f"generated-post-{new_uuid}"
+
     elif matcher_type == "author":
-        value = 1
+        value = random.choice([1,2])
     elif matcher_type in ["comment_count_min", "comment_count_max"]:
         value = random.randint(0, 10)
     elif matcher_type in ["modified_date_min", "modified_date_max"]:
-        value = (datetime.now() - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
+        value = (datetime.now() + timedelta(days=random.randint(1, 365)) - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
     else:
         value = ""
     return {"type": matcher_type, "value": value, "order": order}
 
+global previous_uuid
 
 def generate_post():
     """Generate a random post with values for various fields."""
-    post_date = (datetime.now() - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
-    post_status = random.choice(["publish", "draft", "pending", "future"])
+    post_date = (datetime.now() + timedelta(days=random.randint(1, 365)) - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
+    post_status = random.choice(["publish", "draft", "pending", "future", "private"])
+
+    if post_status == "future" and post_date < (datetime.now()).strftime(DATE_FORMAT):
+        post_status = "publish"
+
+    if post_status == "publish" and post_date > (datetime.now()).strftime(DATE_FORMAT):
+        post_status = "future"
+
+    modified_date = post_date
 
     comment_status = random.choice(["open", "closed"])
 
@@ -59,18 +80,22 @@ def generate_post():
     else:
         comment_count = random.randint(0, 10)
 
+    global previous_uuid
+
+    previous_uuid = uuid.uuid4()
+
     return {
-        "post_title": f"Generated Post",
-        "post_content": "Generated content for test case.",
+        "post_title": f"Generated Post {random.randint(1,3)}",
+        "post_content": f"Generated content for test case {random.randint(1,3)}.",
         "post_status": post_status,
         "post_category": [f"category_{random.randint(1, 5)}"],
         "post_tag": [f"tag_{random.randint(1, 5)}"],
         "post_date": post_date,
         "comment_count": comment_count,
         "comment_status": comment_status,
-        "post_type": random.choice(["post", "page"]),
-        "modified_date": (datetime.now() - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT),
-        "post_slug": f"generated-post-{random.randint(1, 100)}",
+        "post_type": "post",
+        "modified_date": modified_date,
+        "post_slug": f"generated-post-{previous_uuid}",
         "author": 1
     }
 

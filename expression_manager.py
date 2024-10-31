@@ -3,8 +3,8 @@ import random
 # Constants for the expression generation
 OPERATORS = ["AND", "OR", "NOT"]
 PREDICATE_FORMAT = "P{}"
-MAX_PREDICATES = 20
-MAX_DEPTH = 5
+MAX_PREDICATES = 5
+MAX_DEPTH = 2
 
 class ExpressionNode:
     def __init__(self, value, left=None, right=None):
@@ -22,7 +22,8 @@ class ExpressionNode:
         """Evaluate the expression based on the provided truth values."""
         if self.is_operator():
             if self.is_unary():
-                return not self.left.evaluate(truth_values)
+                if self.left:  # Ensure left is not None for NOT operator
+                    return not self.left.evaluate(truth_values)
             elif self.value == "AND":
                 return self.left.evaluate(truth_values) and self.right.evaluate(truth_values)
             elif self.value == "OR":
@@ -72,12 +73,12 @@ class ExpressionTree:
         """Evaluate the expression based on truth values of predicates."""
         return expression.evaluate(truth_values)
 
-    def generate_and_evaluate(self, predicate_generator, evaluator):
+    def generate_and_evaluate(self, predicate_generator):
         """Generate a random expression, evaluate it with random truth values, and display the results."""
         expression = self.generate_expression()
 
         # Generate random truth values for each predicate
-        truth_values = {PREDICATE_FORMAT.format(i): evaluator(predicate_generator()) for i in range(1, MAX_PREDICATES + 1)}
+        truth_values = {PREDICATE_FORMAT.format(i): predicate_generator() for i in range(1, MAX_PREDICATES + 1)}
         print(f"Generated Expression: {expression}")
         print(f"Truth Values: {truth_values}")
         print(f"Evaluation Result: {expression.evaluate(truth_values)}")
@@ -88,4 +89,4 @@ class ExpressionTree:
 if __name__ == "__main__":
     for i in range(10):
         expr_tree = ExpressionTree()
-        expr_tree.generate_and_evaluate(lambda: random.choice([True, False]), lambda x: not x)
+        expr_tree.generate_and_evaluate(lambda: random.choice([True, False]))

@@ -321,6 +321,9 @@ def get_next_filename(directory="output", base_name="failed_generated_matcher_Te
     # Encuentra todos los archivos que coinciden con el patrón en el directorio
     files = glob.glob(pattern)
 
+    if not(files) or len(files)==0:
+        return os.path.join(directory, f"{base_name}_1.json")
+
     # Extrae los números de cada archivo
     numbers = []
     for file in files:
@@ -341,6 +344,9 @@ def get_first_matching_filename(directory="output", base_name="failed_generated_
 
     # Find all files matching the pattern
     files = glob.glob(pattern)
+
+    if not(files):
+        return "current.json"
 
     # Sort files by the number extracted from the filename
     files_sorted = sorted(
