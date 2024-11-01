@@ -1,4 +1,5 @@
 import random
+import re
 
 # Constants for the expression generation
 OPERATORS = ["AND", "OR", "NOT"]
@@ -73,6 +74,53 @@ class ExpressionTree:
         """Evaluate the expression based on truth values of predicates."""
         return expression.evaluate(truth_values)
 
+    def parse_expression(self, expression_str):
+        """Parse a string expression and convert it into an expression tree."""
+
+        tokens = re.findall(r'\(|\)|AND|OR|NOT|P\d+', expression_str)
+        return self._parse_tokens(tokens)
+
+    def _parse_tokens(self, tokens):
+        """Helper method to recursively parse tokens into an expression tree."""
+        stack = []
+
+        while tokens:
+            token = tokens.pop(0)
+            if token == '(':
+                stack.append(token)
+            elif token == ')':
+                # Pop until matching '('
+                expr = []
+                while stack and stack[-1] != '(':
+                    expr.append(stack.pop())
+                stack.pop()  # Remove '('
+                expr = expr[::-1]  # Reverse the order
+                stack.append(self._build_expression_from_list(expr))
+            elif token in OPERATORS or re.match(r'P\d+', token):
+                stack.append(token)
+
+        # Final parsing
+        if len(stack) == 1 and isinstance(stack[0], ExpressionNode):
+            return stack[0]
+        else:
+            return self._build_expression_from_list(stack)
+
+    def _build_expression_from_list(self, expr_list):
+        """Builds an ExpressionNode from a list of tokens in RPN order."""
+        stack = []
+        for token in expr_list:
+            if re.match(r'P\d+', token):
+                stack.append(ExpressionNode(token))
+            elif token == "NOT":
+                operand = stack.pop()
+                stack.append(ExpressionNode(token, left=operand))
+            elif token in ["AND", "OR"]:
+                right = stack.pop()
+                left = stack.pop()
+                stack.append(ExpressionNode(token, left=left, right=right))
+
+        return stack[0] if stack else None
+
     def generate_and_evaluate(self, predicate_generator):
         """Generate a random expression, evaluate it with random truth values, and display the results."""
         expression = self.generate_expression()
@@ -89,12 +137,13 @@ class ExpressionTree:
 if __name__ == "__main__":
     expr_tree = ExpressionTree()
 
-    # Testing with custom truth values (adjust here for expected values)
-    truth_values = {"P1": True, "P2": False, "P3": True, "P4": False, "P5": True}
+    # Example expression string
+    expression_str = "((P1 OR P2) AND (P3 AND P4))"
+    expression = expr_tree.parse_expression(expression_str)
 
-    # Generate expression and evaluate with specific truth values
-    expression = expr_tree.generate_expression()
-    print(f"Generated Expression: {expression}")
+    # Testing with custom truth values
+    truth_values = {"P1": True, "P2": False, "P3": True, "P4": True}
+    print(f"Parsed Expression: {expression}")
     print(f"Truth Values: {truth_values}")
     result = expression.evaluate(truth_values)
     print(f"Evaluation Result: {result}")
