@@ -6,10 +6,11 @@ PREDICATE_FORMAT = "P{}"
 MAX_PREDICATES = 5
 MAX_DEPTH = 2
 
+
 class ExpressionNode:
     def __init__(self, value, left=None, right=None):
         self.value = value  # Can be "AND", "OR", "NOT", or a predicate
-        self.left = left    # Left child node
+        self.left = left  # Left child node
         self.right = right  # Right child node (only for binary operators)
 
     def is_operator(self):
@@ -21,23 +22,14 @@ class ExpressionNode:
     def evaluate(self, truth_values):
         """Evaluate the expression based on the provided truth values."""
         if self.is_operator():
-            if self.is_unary():
-                if self.left is not None:
-                    return not self.left.evaluate(truth_values)
-                else:
-                    raise ValueError("Unary operator 'NOT' requires a left operand.")
-            elif self.value == "AND":
-                if self.left is not None and self.right is not None:
-                    return self.left.evaluate(truth_values) and self.right.evaluate(truth_values)
-                else:
-                    raise ValueError("Binary operator 'AND' requires both left and right operands.")
-            elif self.value == "OR":
-                if self.left is not None and self.right is not None:
-                    return self.left.evaluate(truth_values) or self.right.evaluate(truth_values)
-                else:
-                    raise ValueError("Binary operator 'OR' requires both left and right operands.")
+            if self.is_unary():  # Handling NOT operation
+                return not self.left.evaluate(truth_values)
+            elif self.value == "AND":  # Handling AND operation
+                return self.left.evaluate(truth_values) and self.right.evaluate(truth_values)
+            elif self.value == "OR":  # Handling OR operation
+                return self.left.evaluate(truth_values) or self.right.evaluate(truth_values)
         else:
-            # Treat as predicate; lookup in truth_values dictionary
+            # Lookup in truth_values dictionary for predicates
             return truth_values.get(self.value, False)
 
     def __str__(self):
@@ -90,11 +82,19 @@ class ExpressionTree:
         print(f"Generated Expression: {expression}")
         print(f"Truth Values: {truth_values}")
         print(f"Evaluation Result: {expression.evaluate(truth_values)}")
+        return expression.evaluate(truth_values)
 
 
 # Usage example with fixed truth values for testing
-
 if __name__ == "__main__":
-    for i in range(10):
-        expr_tree = ExpressionTree()
-        expr_tree.generate_and_evaluate(lambda: random.choice([True, False]))
+    expr_tree = ExpressionTree()
+
+    # Testing with custom truth values (adjust here for expected values)
+    truth_values = {"P1": True, "P2": False, "P3": True, "P4": False, "P5": True}
+
+    # Generate expression and evaluate with specific truth values
+    expression = expr_tree.generate_expression()
+    print(f"Generated Expression: {expression}")
+    print(f"Truth Values: {truth_values}")
+    result = expression.evaluate(truth_values)
+    print(f"Evaluation Result: {result}")
