@@ -26,7 +26,7 @@ PASSWORD = 't9by bUzR 0t5g 3HTk KB7T pxyr'
 
 NONCE = 'your-generated-nonce'
 
-# Formar la cadena 'usuario:contraseña'
+# Formar la cadena 'usuario:contraseña'k
 auth_string = f'{USERNAME}:{PASSWORD}'
 
 # Codificar la cadena en Base64
@@ -314,6 +314,21 @@ def delete_all_comments():
         print(f"Deleted comment {comment['id']}")
 
 
+# Obtener todos los usuarios de WordPress
+def get_all_users():
+    url = WP_URL + 'users'
+    response = requests.get(url, headers=HEADERS)
+
+    if response.status_code != 200:
+        raise RESTAPIError(f"Failed to retrieve users: {response.text}")
+
+    users = response.json()
+    result = dict()
+    for user in users:
+        result[user['id']] = user['name']
+    return result
+
+
 def get_next_filename(directory="output", base_name="failed_generated_matcher_Test_Case"):
     # Define el patrón completo con el directorio
     pattern = os.path.join(directory, f"{base_name}_*.json")
@@ -357,6 +372,7 @@ def get_first_matching_filename(directory="output", base_name="failed_generated_
     # Return the first file or None if no matching file is found
     return files_sorted[0] if files_sorted else None
 
+all_users = get_all_users()
 
 testing_file = get_first_matching_filename()
 
@@ -406,7 +422,7 @@ def test_scheduler_system(test_case):
 
 
 def test_with_generated():
-    generated_matcher = generate_test_case("Test case generated")
+    generated_matcher = generate_test_case("Test case generated", all_users)
     try:
         test_scheduler_system(generated_matcher)
     except AssertionError as e:
@@ -418,7 +434,7 @@ def test_with_generated():
 
 
 # Generate test cases for 100 iterations with explicit "id" values
-generated_cases = generate_test_cases(100)
+generated_cases = generate_test_cases(100, all_users)
 
 # Parametrize the test with the generated cases and unique IDs
 @pytest.mark.parametrize("generated_test_case", generated_cases, ids=lambda val: f"test_run_{val["scheduler"]["scheduler_name"]}")

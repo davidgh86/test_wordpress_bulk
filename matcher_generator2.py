@@ -19,16 +19,21 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 MAX_PREDICATES = 20
 PREDICATE_FORMAT = "P{}"
 
+global previous_uuid
 
-def generate_matcher(order):
+def generate_matcher(order, users):
+    global previous_uuid
+
     matcher_type = random.choice(MATCHER_TYPES)
     """Generate a matcher based on the type."""
     if matcher_type == "datetime_min":
         value = (datetime.now() + timedelta(days=random.randint(1, 365)) - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
     elif matcher_type == "datetime_max":
         value = (datetime.now() + timedelta(days=random.randint(1, 365)) - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
-    elif matcher_type in ["tag", "category"]: #, "status", "comment_status", "post_type"]:
-        value = f"sample_{matcher_type}_{random.randint(1, 5)}"
+    elif matcher_type == "tag": #, "status", "comment_status", "post_type"]:
+        value = f"tag_{random.randint(1, 5)}"
+    elif matcher_type == "category": #, "status", "comment_status", "post_type"]:
+        value = f"category_{random.randint(1, 5)}"
     elif matcher_type == "comment_status":
         value = random.choice(["open", "closed"])
     elif matcher_type == "status":
@@ -42,14 +47,14 @@ def generate_matcher(order):
         value = f"Generated content for test case {random.randint(1,3)}."
     elif matcher_type == "slug":
         random_val = random.randint(1,2)
-        if random_val == 1:
+        if random_val == 1 and not (previous_uuid is None):
             new_uuid = previous_uuid
         else:
             new_uuid = uuid.uuid4()
         value = f"generated-post-{new_uuid}"
 
     elif matcher_type == "author":
-        value = random.choice([1,2])
+        value = random.choice(list(users.values()))
     elif matcher_type in ["comment_count_min", "comment_count_max"]:
         value = random.randint(0, 10)
     elif matcher_type in ["modified_date_min", "modified_date_max"]:
@@ -57,8 +62,6 @@ def generate_matcher(order):
     else:
         value = ""
     return {"type": matcher_type, "value": value, "order": order}
-
-global previous_uuid
 
 def generate_post():
     """Generate a random post with values for various fields."""
@@ -75,10 +78,11 @@ def generate_post():
 
     comment_status = random.choice(["open", "closed"])
 
-    if post_status != "publish" or comment_status == "closed":
+    if comment_status == "closed" or post_status not in ["publish", "private"]:
         comment_count = 0
     else:
-        comment_count = random.randint(0, 10)
+        comment_count = 0
+        #comment_count = random.randint(0, 10)
 
     global previous_uuid
 
@@ -99,12 +103,22 @@ def generate_post():
         "author": 1
     }
 
+def get_expression():
+    generated_expression = False
+    while not generated_expression:
+        expr_tree = ExpressionTree()
+        expression = expr_tree.generate_expression()
+        pattern = r'(P\d+)'
+        predicates = re.findall(pattern, str(expression))
+        if len(predicates) == len(set(predicates)):
+            generated_expression = True
+    return (expr_tree, expression)
 
-def generate_test_case(case_name):
+
+def generate_test_case(case_name, users):
     """Generate a full test case with an expression, posts, and expected output."""
 
-    expr_tree = ExpressionTree()
-    expression = expr_tree.generate_expression()
+    (expr_tree, expression) = get_expression()
     expression_string = str(expression)
 
     pattern = r'(\bAND\b|\bOR\b|\bNOT\b|\(|\)|P\d+)'
@@ -119,7 +133,7 @@ def generate_test_case(case_name):
 
     for matcher_string in matchers_string:
         if matcher_string.startswith("P"):
-            generated_matcher = generate_matcher(matcher_index)
+            generated_matcher = generate_matcher(matcher_index, users)
             matchers_dict[matcher_string] = generated_matcher
             matchers_array.append(generated_matcher)
         else:
@@ -219,13 +233,13 @@ def evaluate_post_against_matcher(post, matcher):
         return False
 
 
-def generate_test_cases(num_cases=5):
-    cases = [generate_test_case(f"Test Case {i + 1}") for i in range(num_cases)]
+def generate_test_cases(num_cases, users):
+    cases = [generate_test_case(f"Test Case {i + 1}", users) for i in range(num_cases)]
     return cases
 
 
 # Save test cases to a JSON file
 if __name__ == "__main__":
-    test_cases = generate_test_cases()
+    test_cases = generate_test_cases(5, users= {})
     with open("test_cases.json", "w") as f:
         json.dump(test_cases, f, indent=4)

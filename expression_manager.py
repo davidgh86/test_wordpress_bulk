@@ -22,12 +22,20 @@ class ExpressionNode:
         """Evaluate the expression based on the provided truth values."""
         if self.is_operator():
             if self.is_unary():
-                if self.left:  # Ensure left is not None for NOT operator
+                if self.left is not None:
                     return not self.left.evaluate(truth_values)
+                else:
+                    raise ValueError("Unary operator 'NOT' requires a left operand.")
             elif self.value == "AND":
-                return self.left.evaluate(truth_values) and self.right.evaluate(truth_values)
+                if self.left is not None and self.right is not None:
+                    return self.left.evaluate(truth_values) and self.right.evaluate(truth_values)
+                else:
+                    raise ValueError("Binary operator 'AND' requires both left and right operands.")
             elif self.value == "OR":
-                return self.left.evaluate(truth_values) or self.right.evaluate(truth_values)
+                if self.left is not None and self.right is not None:
+                    return self.left.evaluate(truth_values) or self.right.evaluate(truth_values)
+                else:
+                    raise ValueError("Binary operator 'OR' requires both left and right operands.")
         else:
             # Treat as predicate; lookup in truth_values dictionary
             return truth_values.get(self.value, False)
@@ -53,7 +61,7 @@ class ExpressionTree:
 
     def generate_expression(self, depth=0):
         """Recursively build an expression tree with random operators and predicates."""
-        if depth > self.max_depth or (depth > 0 and random.choice([True, False])):
+        if depth >= self.max_depth or (depth > 0 and random.choice([True, False])):
             # Return a predicate as a leaf node
             return ExpressionNode(self.generate_predicate())
 
@@ -84,7 +92,7 @@ class ExpressionTree:
         print(f"Evaluation Result: {expression.evaluate(truth_values)}")
 
 
-# Usage example
+# Usage example with fixed truth values for testing
 
 if __name__ == "__main__":
     for i in range(10):
