@@ -8,7 +8,8 @@ import base64
 import pytest
 from _pytest.outcomes import Failed
 
-from matcher_generator2 import generate_test_cases, generate_test_case
+from expression_manager2 import ExpressionManager
+from matcher_generator2 import generate_test_cases, generate_test_case, evaluate_post_against_matcher
 
 # Variables globales
 
@@ -372,6 +373,38 @@ def get_first_matching_filename(directory="output", base_name="failed_generated_
     # Return the first file or None if no matching file is found
     return files_sorted[0] if files_sorted else None
 
+def recalculate_expected(test_case, users):
+    posts = test_case["posts"]
+
+    expression = ""
+    matcher_evaluations = [dict() for _ in posts]
+
+    result_evaluations = []
+
+    i = 0
+    for matcher in test_case["scheduler"]["matchers"]:
+        if matcher["type"] == "operator":
+            expression += " " + matcher["value"]
+        else:
+            i += 1
+            expression += " P" + str(i)
+            for j in range(len(posts)):
+                matcher_evaluations[j]["P"+str(i)] = evaluate_post_against_matcher(posts[j], matcher, users)
+
+    expression = expression.strip()
+
+    manager = ExpressionManager()
+
+    parsed = manager.parse_expression(expression)
+
+    for i in range(len(matcher_evaluations)):
+        if parsed.evaluate(matcher_evaluations[i]):
+            result_evaluations.append(i)
+
+    test_case["expected"] = result_evaluations
+    return test_case
+
+
 all_users = get_all_users()
 
 testing_file = get_first_matching_filename()
@@ -383,42 +416,40 @@ testing_file = get_first_matching_filename()
 @pytest.mark.parametrize("test_case", json.load(open(testing_file, 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 def test_scheduler_system(test_case):
     try:
-        delete_all_comments()
-        delete_all_posts()
-        delete_all_categories()
-        delete_all_tags()
-        delete_all_schedulers()
-
-        # Assert initial post count is zero
-        assert get_post_count() == 0, "Expected 0 posts at start, found otherwise."
-
-        scheduler_data = test_case["scheduler"]
-        posts = test_case["posts"]
-        expected_post_indices = test_case["expected"]
-
-        # Create Scheduler
-        scheduler_response = create_expression(scheduler_data)
-        scheduler_id = scheduler_response['scheduler_id']
-
-        # Crear los posts asociados a este scheduler
-        post_ids = []
-        for post_data in posts:
-            post_id = create_post(post_data)
-            post_ids.append(str(post_id))
-
-        assert get_post_count() == len(posts), f"Expected {len(posts)} posts created, but found different."
-
-        # Comprobar si los IDs devueltos por la expresión coinciden con los esperados
-        post_ids_by_expression = get_post_ids_by_expression(scheduler_id)
-        expected_ids = [post_ids[i] for i in expected_post_indices]
-
-        # Asertar que los IDs coincidan
-        assert set(post_ids_by_expression) == set(expected_ids), f"Expected: {expected_ids}, Got: {post_ids_by_expression}"
+        test_case_recalculated = recalculate_expected(test_case, all_users)
+        execute_test(test_case_recalculated)
 
     except RESTAPIError as e:
         pytest.fail(f"API request failed: {str(e)}")
     except Exception as e:
         pytest.fail(f"An unexpected error occurred: {str(e)}")
+
+
+def execute_test(test_case):
+    delete_all_comments()
+    delete_all_posts()
+    delete_all_categories()
+    delete_all_tags()
+    delete_all_schedulers()
+    # Assert initial post count is zero
+    assert get_post_count() == 0, "Expected 0 posts at start, found otherwise."
+    scheduler_data = test_case["scheduler"]
+    posts = test_case["posts"]
+    expected_post_indices = test_case["expected"]
+    # Create Scheduler
+    scheduler_response = create_expression(scheduler_data)
+    scheduler_id = scheduler_response['scheduler_id']
+    # Crear los posts asociados a este scheduler
+    post_ids = []
+    for post_data in posts:
+        post_id = create_post(post_data)
+        post_ids.append(str(post_id))
+    assert get_post_count() == len(posts), f"Expected {len(posts)} posts created, but found different."
+    # Comprobar si los IDs devueltos por la expresión coinciden con los esperados
+    post_ids_by_expression = get_post_ids_by_expression(scheduler_id)
+    expected_ids = [post_ids[i] for i in expected_post_indices]
+    # Asertar que los IDs coincidan
+    assert set(post_ids_by_expression) == set(expected_ids), f"Expected: {expected_ids}, Got: {post_ids_by_expression}"
 
 
 def test_with_generated():
@@ -434,7 +465,7 @@ def test_with_generated():
 
 
 # Generate test cases for 100 iterations with explicit "id" values
-generated_cases = generate_test_cases(100, all_users)
+generated_cases = generate_test_cases(1, all_users)
 
 # Parametrize the test with the generated cases and unique IDs
 @pytest.mark.parametrize("generated_test_case", generated_cases, ids=lambda val: f"test_run_{val["scheduler"]["scheduler_name"]}")

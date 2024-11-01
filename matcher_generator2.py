@@ -4,7 +4,7 @@ import re
 from datetime import datetime, timedelta
 import uuid
 
-from expression_manager import ExpressionTree
+from expression_manager2 import ExpressionManager
 from generador_expresiones import generate_expression, OPERATORS  # Assuming this script is saved as expression_generator.py
 
 # Available matcher types
@@ -103,22 +103,21 @@ def generate_post():
         "author": 1
     }
 
-def get_expression():
-    generated_expression = False
-    while not generated_expression:
-        expr_tree = ExpressionTree()
-        expression = expr_tree.generate_expression()
+def get_expression(manager):
+    while True:
+        expression = manager.create_random_expression()
         pattern = r'(P\d+)'
         predicates = re.findall(pattern, str(expression))
         if len(predicates) == len(set(predicates)):
-            generated_expression = True
-    return (expr_tree, expression)
+            break
+    return expression
 
 
 def generate_test_case(case_name, users):
     """Generate a full test case with an expression, posts, and expected output."""
 
-    (expr_tree, expression) = get_expression()
+    manager = ExpressionManager()
+    expression = get_expression(manager)
     expression_string = str(expression)
 
     pattern = r'(\bAND\b|\bOR\b|\bNOT\b|\(|\)|P\d+)'
@@ -159,10 +158,10 @@ def generate_test_case(case_name, users):
 
         for pred in matchers_dict.keys():
             matcher = matchers_dict[pred]
-            evaluation = evaluate_post_against_matcher(post, matcher)
+            evaluation = evaluate_post_against_matcher(post, matcher, users)
             truth_values[pred] = evaluation
 
-        post_evaluation = expr_tree.evaluate_expression(expression, truth_values)
+        post_evaluation = expression.evaluate(truth_values)
         if post_evaluation:
             posts_evaluations.append(i)
 
@@ -197,7 +196,7 @@ def evaluate_post_against_expression(post, tokens, predicate_to_matcher):
     return stack[0] if stack else False
 
 
-def evaluate_post_against_matcher(post, matcher):
+def evaluate_post_against_matcher(post, matcher, users):
     """Evaluate a single matcher against a post."""
     if matcher["type"] == "tag":
         return matcher["value"] in post["post_tag"]
@@ -228,7 +227,11 @@ def evaluate_post_against_matcher(post, matcher):
     elif matcher["type"] == 'slug':
         return matcher['value'].lower() in post['post_slug'].lower()
     elif matcher["type"] == 'author':
-        return matcher['value'] == post["author"]
+        try:
+            result = matcher['value'] == users[post["author"]]
+        except KeyError:
+            result = False
+        return result
     else:
         return False
 
