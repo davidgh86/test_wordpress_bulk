@@ -2,6 +2,7 @@ import glob
 import json
 import os
 import re
+import time
 
 import requests
 import base64
@@ -382,9 +383,6 @@ def recalculate_expected(test_case, users):
     return test_case
 
 
-
-
-
 all_users = get_all_users()
 
 testing_file = get_first_matching_filename()
@@ -394,13 +392,15 @@ testing_file = get_first_matching_filename()
 #@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 #@pytest.mark.parametrize("test_case", json.load(open('current2.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 @pytest.mark.parametrize("test_case", json.load(open(testing_file, 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
-def test_scheduler_system(test_case):
+def test_scheduler_system(test_case, retries = 3, exception = None):
     try:
+        if (retries == 0):
+            pytest.fail(f"API request failed: {str(exception)}")
         test_case_recalculated = recalculate_expected(test_case, all_users)
         execute_test(test_case_recalculated)
-
     except RESTAPIError as e:
-        pytest.fail(f"API request failed: {str(e)}")
+        time.sleep(5)
+        test_scheduler_system(test_case, retries - 1, e)
     except Exception as e:
         pytest.fail(f"An unexpected error occurred: {str(e)}")
 
@@ -429,6 +429,7 @@ def execute_test(test_case):
     post_ids_by_expression = get_post_ids_by_expression(scheduler_id)
     expected_ids = [post_ids[i] for i in expected_post_indices]
     # Asertar que los IDs coincidan
+    print(f"Percentage: {len(expected_ids)}/{len(posts)}={(len(expected_ids)/len(posts)) * 100}%")
     assert set(post_ids_by_expression) == set(expected_ids), f"Expected: {expected_ids}, Got: {post_ids_by_expression}"
 
 
@@ -445,7 +446,7 @@ def test_with_generated():
 
 
 # Generate test cases for 100 iterations with explicit "id" values
-generated_cases = generate_test_cases(100, all_users)
+generated_cases = generate_test_cases(1000, all_users)
 
 # Parametrize the test with the generated cases and unique IDs
 @pytest.mark.parametrize("generated_test_case", generated_cases, ids=lambda val: f"test_run_{val["scheduler"]["scheduler_name"]}")

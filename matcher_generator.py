@@ -18,7 +18,6 @@ MATCHER_TYPES = [
 ]
 
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
-MAX_PREDICATES = 20
 PREDICATE_FORMAT = "P{}"
 
 global previous_uuid
@@ -168,7 +167,7 @@ def generate_test_case(case_name, users):
 
 
 
-    number_of_posts = random.randint(1, 10)
+    number_of_posts = random.randint(1, 20)
 
     posts = []
 
