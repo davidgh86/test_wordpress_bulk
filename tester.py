@@ -8,8 +8,7 @@ import base64
 import pytest
 from _pytest.outcomes import Failed
 
-from expression_manager2 import ExpressionManager
-from matcher_generator2 import generate_test_cases, generate_test_case, evaluate_post_against_matcher, obtain_evaluation
+from matcher_generator import generate_test_cases, generate_test_case, obtain_evaluation
 
 # Variables globales
 
