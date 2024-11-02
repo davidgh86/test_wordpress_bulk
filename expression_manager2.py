@@ -8,8 +8,8 @@ import re
 # Constants for expression generation
 OPERATORS = ["AND", "OR", "NOT"]
 PREDICATE_FORMAT = "P{}"
-MAX_PREDICATES = 5
-MAX_DEPTH = 2
+MAX_PREDICATES = 20
+MAX_DEPTH = 5
 
 
 class ExpressionNode:

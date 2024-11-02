@@ -9,7 +9,7 @@ import pytest
 from _pytest.outcomes import Failed
 
 from expression_manager2 import ExpressionManager
-from matcher_generator2 import generate_test_cases, generate_test_case, evaluate_post_against_matcher
+from matcher_generator2 import generate_test_cases, generate_test_case, evaluate_post_against_matcher, obtain_evaluation
 
 # Variables globales
 
@@ -375,34 +375,15 @@ def get_first_matching_filename(directory="output", base_name="failed_generated_
 
 def recalculate_expected(test_case, users):
     posts = test_case["posts"]
+    matchers = test_case["scheduler"]["matchers"]
 
-    expression = ""
-    matcher_evaluations = [dict() for _ in posts]
-
-    result_evaluations = []
-
-    i = 0
-    for matcher in test_case["scheduler"]["matchers"]:
-        if matcher["type"] == "operator":
-            expression += " " + matcher["value"]
-        else:
-            i += 1
-            expression += " P" + str(i)
-            for j in range(len(posts)):
-                matcher_evaluations[j]["P"+str(i)] = evaluate_post_against_matcher(posts[j], matcher, users)
-
-    expression = expression.strip()
-
-    manager = ExpressionManager()
-
-    parsed = manager.parse_expression(expression)
-
-    for i in range(len(matcher_evaluations)):
-        if parsed.evaluate(matcher_evaluations[i]):
-            result_evaluations.append(i)
+    result_evaluations = obtain_evaluation(matchers, posts, users)
 
     test_case["expected"] = result_evaluations
     return test_case
+
+
+
 
 
 all_users = get_all_users()
@@ -465,7 +446,7 @@ def test_with_generated():
 
 
 # Generate test cases for 100 iterations with explicit "id" values
-generated_cases = generate_test_cases(1, all_users)
+generated_cases = generate_test_cases(100, all_users)
 
 # Parametrize the test with the generated cases and unique IDs
 @pytest.mark.parametrize("generated_test_case", generated_cases, ids=lambda val: f"test_run_{val["scheduler"]["scheduler_name"]}")

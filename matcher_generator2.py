@@ -112,6 +112,26 @@ def get_expression(manager):
             break
     return expression
 
+def obtain_evaluation(matchers, posts, users):
+    expression = ""
+    matcher_evaluations = [dict() for _ in posts]
+    result_evaluations = []
+    i = 0
+    for matcher in matchers:
+        if matcher["type"] == "operator":
+            expression += " " + matcher["value"]
+        else:
+            i += 1
+            expression += " P" + str(i)
+            for j in range(len(posts)):
+                matcher_evaluations[j]["P" + str(i)] = evaluate_post_against_matcher(posts[j], matcher, users)
+    expression = expression.strip()
+    manager = ExpressionManager()
+    parsed = manager.parse_expression(expression)
+    for i in range(len(matcher_evaluations)):
+        if parsed.evaluate(matcher_evaluations[i]):
+            result_evaluations.append(i)
+    return result_evaluations
 
 def generate_test_case(case_name, users):
     """Generate a full test case with an expression, posts, and expected output."""
@@ -149,21 +169,10 @@ def generate_test_case(case_name, users):
     number_of_posts = random.randint(1, 10)
 
     posts = []
-    posts_evaluations = []
 
     for i in range(number_of_posts):
         post = generate_post()
         posts.append(post)
-        truth_values = dict()
-
-        for pred in matchers_dict.keys():
-            matcher = matchers_dict[pred]
-            evaluation = evaluate_post_against_matcher(post, matcher, users)
-            truth_values[pred] = evaluation
-
-        post_evaluation = expression.evaluate(truth_values)
-        if post_evaluation:
-            posts_evaluations.append(i)
 
     return {
             "scheduler": {
@@ -172,7 +181,7 @@ def generate_test_case(case_name, users):
                 "matchers": matchers_array
             },
             "posts": posts,
-            "expected": posts_evaluations
+            "expected": obtain_evaluation(matchers_array, posts, users)
         }
 
 
