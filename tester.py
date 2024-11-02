@@ -13,17 +13,23 @@ from matcher_generator import generate_test_cases, generate_test_case, obtain_ev
 
 # Variables globales
 
-HOSTNAME = "http://ccccc.local"
-#HOSTNAME = "http://bbbbb.local:10011"
+#connection_data = {
+#    "hostname": "http://ccccc.local",
+#    "username": "ccccc",
+#    "password": "t9by bUzR 0t5g 3HTk KB7T pxyr"
+#}
 
+connection_data = {
+    "hostname": "http://bbbbb.local:10011",
+    "username": "bbbbb",
+    "password": "nunn fRps ls6M Hfvx nntU 5cQq"
+}
+
+HOSTNAME = connection_data["hostname"]
 WP_URL = HOSTNAME + "/wp-json/wp/v2/"
 PLUGIN_API_URL = HOSTNAME + "/wp-json/shuffler/v1/"
-
-#USERNAME = 'bbbbb'
-USERNAME = 'ccccc'
-
-#PASSWORD = 'nunn fRps ls6M Hfvx nntU 5cQq'
-PASSWORD = 't9by bUzR 0t5g 3HTk KB7T pxyr'
+USERNAME = connection_data["username"]
+PASSWORD = connection_data["password"]
 
 NONCE = 'your-generated-nonce'
 

@@ -64,7 +64,7 @@ def generate_matcher(order, users):
         value = ""
     return {"type": matcher_type, "value": value, "order": order}
 
-def generate_post():
+def generate_post(usersId):
     """Generate a random post with values for various fields."""
     post_date = (datetime.now() + timedelta(days=random.randint(1, 365)) - timedelta(days=random.randint(1, 365))).strftime(DATE_FORMAT)
     post_status = random.choice(["publish", "draft", "pending", "future", "private"])
@@ -101,7 +101,7 @@ def generate_post():
         "post_type": "post",
         "modified_date": modified_date,
         "post_slug": f"generated-post-{previous_uuid}",
-        "author": 1
+        "author": random.choice(usersId)
     }
 
 def get_expression(manager):
@@ -172,7 +172,7 @@ def generate_test_case(case_name, users):
     posts = []
 
     for i in range(number_of_posts):
-        post = generate_post()
+        post = generate_post(list(users.keys()))
         posts.append(post)
 
     return {
