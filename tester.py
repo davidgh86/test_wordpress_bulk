@@ -1,3 +1,4 @@
+import csv
 import glob
 import json
 import os
@@ -44,6 +45,8 @@ HEADERS = {
     'Authorization': f'Basic {auth_base64}',
     'Content-Type': 'application/json'
 }
+
+CSV_FILE="report/report.csv"
 
 
 class RESTAPIError(Exception):
@@ -393,22 +396,54 @@ all_users = get_all_users()
 
 testing_file = get_first_matching_filename()
 
+if not os.path.exists(CSV_FILE):
+    with open(CSV_FILE, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Test Case', 'Retries', 'Time', 'Failed'])
+
+global start_time
+
+global calculating_time
+
+calculating_time = False
+
 # Test principal usando pytest
 #@pytest.mark.parametrize("test_case", json.load(open('test_resources.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 #@pytest.mark.parametrize("test_case", json.load(open('current.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 #@pytest.mark.parametrize("test_case", json.load(open('current2.json', 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
 @pytest.mark.parametrize("test_case", json.load(open(testing_file, 'r', encoding='utf-8')), ids= lambda val : f"{val["scheduler"]["scheduler_name"]}")
-def test_scheduler_system(test_case, retries = 3, exception = None):
+def test_scheduler_system(test_case, retries = 0, exception = None):
+    global start_time
+    global calculating_time
+
+    if not calculating_time:
+        start_time = time.perf_counter()
+        calculating_time = True
     try:
-        if (retries == 0):
+        if retries == 10:
             pytest.fail(f"API request failed: {str(exception)}")
         test_case_recalculated = recalculate_expected(test_case, all_users)
         execute_test(test_case_recalculated)
+        register_metric(start_time, test_case['scheduler']['scheduler_name'], retries, False)
+
     except RESTAPIError as e:
-        time.sleep(5)
-        test_scheduler_system(test_case, retries - 1, e)
+        if retries == 9:
+            register_metric(start_time, test_case['scheduler']['scheduler_name'], retries, True)
+        time.sleep(5 + pow(1.5, retries))
+        test_scheduler_system(test_case, retries + 1, e)
     except Exception as e:
         pytest.fail(f"An unexpected error occurred: {str(e)}")
+
+
+def register_metric(start_time, name, retries, failed):
+    global calculating_time
+    end_time = time.perf_counter()
+    elapsed_time = (end_time - start_time) * 1000
+    calculating_time = False
+    # writer.writerow(['Test Case', 'Retries', 'Time', 'Failed'])
+    with open(CSV_FILE, mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow([name, retries, f"{int(elapsed_time)}", f"{failed}"])
 
 
 def execute_test(test_case):
