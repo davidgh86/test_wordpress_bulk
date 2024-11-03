@@ -11,7 +11,7 @@ requests = "^2.32.3"
 pytest = "^8.3.3"
 pandas = "^2.2.3"
 matplotlib = "^3.9.2"
-sns = "^0.1"
+seaborn = "^0.13.2"
 
 
 [build-system]

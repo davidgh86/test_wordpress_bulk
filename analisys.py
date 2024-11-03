@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import sns
+import seaborn as sns
 
 # Cargar los datos del archivo CSV
 file_path = 'report/report.csv'
@@ -91,5 +91,31 @@ plt.figure(figsize=(10, 6))
 plt.boxplot(data['Time'], vert=False, patch_artist=True, boxprops=dict(facecolor='lightblue'))
 plt.title('Diagrama de Caja de Tiempos de Ejecución')
 plt.xlabel('Tiempo (ms)')
+plt.grid()
+plt.show()
+
+# Histograma de reintentos
+plt.figure(figsize=(10, 6))
+plt.hist(data['Retries'], bins=range(int(data['Retries'].max()) + 2), edgecolor='black', color='skyblue')
+plt.title('Histograma de Reintentos')
+plt.xlabel('Número de Reintentos')
+plt.ylabel('Frecuencia')
+plt.grid(axis='y')
+plt.show()
+
+# Gráfico de densidad (KDE) para la distribución de reintentos
+plt.figure(figsize=(10, 6))
+sns.kdeplot(data['Retries'], fill=True, color="skyblue")
+plt.title('Distribución de Densidad de Reintentos')
+plt.xlabel('Número de Reintentos')
+plt.ylabel('Densidad')
+plt.grid()
+plt.show()
+
+# Diagrama de caja (Boxplot) para el número de reintentos
+plt.figure(figsize=(10, 6))
+plt.boxplot(data['Retries'], vert=False, patch_artist=True, boxprops=dict(facecolor='lightblue'))
+plt.title('Diagrama de Caja de Reintentos')
+plt.xlabel('Número de Reintentos')
 plt.grid()
 plt.show()
