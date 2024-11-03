@@ -873,6 +873,16 @@ files = [
 ]
 
 [[package]]
+name = "sns"
+version = "0.1"
+description = "SNS utils"
+optional = false
+python-versions = "*"
+files = [
+    {file = "sns-0.1.tar.gz", hash = "sha256:2d847d23eb8e0ea20054dbadabdecfafc529e4c7a16a6ce70205c4bf8ebc6cf4"},
+]
+
+[[package]]
 name = "tzdata"
 version = "2024.2"
 description = "Provider of IANA time zone data"
@@ -903,4 +913,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "b372c043932d195ade4f92afcd8c39eb44d69fda4e24398afef14830b2550fc7"
+content-hash = "f694355575793629633259f1131b8c9c5f08514476f325e2d0596fb7ee15cffd"

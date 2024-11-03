@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import sns
 
 # Cargar los datos del archivo CSV
 file_path = 'report/report.csv'
@@ -51,7 +52,7 @@ plt.show()
 
 # Gráfico 4: Comparativa de tiempos entre tests fallidos y exitosos
 plt.figure(figsize=(10, 6))
-plt.boxplot([data[data['Failed'] == False]['Time'], data[data['Failed'] == True]['Time']], labels=['Exitosos', 'Fallidos'])
+plt.boxplot([data[data['Failed'] == False]['Time'], data[data['Failed'] == True]['Time']], tick_labels=['Exitosos', 'Fallidos'])
 plt.title('Comparativa de Tiempo de Ejecución entre Tests Exitosos y Fallidos')
 plt.ylabel('Tiempo de Ejecución (ms)')
 plt.grid()
@@ -64,5 +65,31 @@ plt.xticks(rotation=90)
 plt.title('Tiempo de Ejecución de Cada Test')
 plt.xlabel('Caso de Test')
 plt.ylabel('Tiempo de Ejecución (ms)')
+plt.grid()
+plt.show()
+
+# Histograma de tiempos de ejecución
+plt.figure(figsize=(10, 6))
+plt.hist(data['Time'], bins=10, edgecolor='black', color='skyblue')
+plt.title('Histograma de Tiempos de Ejecución')
+plt.xlabel('Tiempo (ms)')
+plt.ylabel('Frecuencia')
+plt.grid(axis='y')
+plt.show()
+
+# Gráfico de densidad (KDE) para la distribución de tiempos de ejecución
+plt.figure(figsize=(10, 6))
+sns.kdeplot(data['Time'], fill=True, color="skyblue")
+plt.title('Distribución de Densidad de Tiempos de Ejecución')
+plt.xlabel('Tiempo (ms)')
+plt.ylabel('Densidad')
+plt.grid()
+plt.show()
+
+# Diagrama de caja (Boxplot) para los tiempos de ejecución
+plt.figure(figsize=(10, 6))
+plt.boxplot(data['Time'], vert=False, patch_artist=True, boxprops=dict(facecolor='lightblue'))
+plt.title('Diagrama de Caja de Tiempos de Ejecución')
+plt.xlabel('Tiempo (ms)')
 plt.grid()
 plt.show()
